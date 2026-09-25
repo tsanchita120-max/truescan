@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TRUESCAN - Link Checker</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/scanner.css') }}">
+</head>
+
+<body>
+
+<div class="scanner-page">
+
+    <!-- HEADER -->
+    <header class="scanner-header">
+
+        <a href="{{ url_for('dashboard') }}" class="back-btn">
+            ←
+        </a>
+
+        <div class="brand-area">
+
+            <img src="{{ url_for('static',
+                    filename='images/truescan-logo.png') }}"
+                 alt="TRUESCAN">
+
+            <div>
+                <h2>TRUESCAN</h2>
+                <p>SCAN • DETECT • PROTECT</p>
+            </div>
+
+        </div>
+
+        <div class="online">
+            <span></span> Online
+        </div>
+
+    </header>
+
+
+    <!-- MAIN -->
+    <main class="scanner-main">
+
+        <div class="scanner-card">
+
+            <!-- TITLE -->
+            <div class="scanner-title">
+
+                <div class="camera-symbol">
+                    🔗
+                </div>
+
+                <div>
+                    <h1>Link Scam Checker</h1>
+                    <p>
+                        Check a website link for suspicious activity
+                    </p>
+                </div>
+
+            </div>
+
+
+            <!-- SECURITY BAR -->
+            <div class="security-bar">
+
+                <span>🛡️</span>
+
+                <div>
+                    <strong>Secure Link Analysis</strong>
+
+                    <small>
+                        Enter a website URL and TRUESCAN will analyze
+                        suspicious keywords and risk indicators.
+                    </small>
+                </div>
+
+            </div>
+
+
+            <!-- FORM -->
+            <form method="POST"
+                  action="{{ url_for('link_checker') }}"
+                  class="link-checker-form">
+
+                <label for="url">
+                    Website / Link
+                </label>
+
+                <div class="url-input-box">
+
+                    <span>🔗</span>
+
+                    <input
+                        type="url"
+                        id="url"
+                        name="url"
+                        placeholder="https://example.com"
+                        required>
+
+                </div>
+
+
+                {% if error %}
+                <div class="form-error">
+                    ⚠️ {{ error }}
+                </div>
+                {% endif %}
+
+
+                <button type="submit"
+                        class="analyze-btn">
+
+                    🔍 Check Link Security
+
+                </button>
+
+            </form>
+
+
+            <!-- CHECKING INFO -->
+            <div class="scanner-info">
+
+                <div>
+                    <span>1</span>
+                    <p>Enter website link</p>
+                </div>
+
+                <div>
+                    <span>2</span>
+                    <p>Analyze suspicious signals</p>
+                </div>
+
+                <div>
+                    <span>3</span>
+                    <p>View security result</p>
+                </div>
+
+            </div>
+
+
+            <!-- WARNING -->
+            <div class="link-warning">
+
+                <span>⚠️</span>
+
+                <div>
+                    <strong>Safety Tip</strong>
+
+                    <p>
+                        Never enter passwords, OTPs or banking details
+                        on suspicious websites.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <a href="{{ url_for('dashboard') }}"
+               class="dashboard-btn">
+
+                ← Back to Dashboard
+
+            </a>
+
+        </div>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer>
+
+        <p>© 2026 TRUESCAN</p>
+
+        <span>Your Digital Safety Partner</span>
+
+    </footer>
+
+</div>
+
+
+<script src="{{ url_for('static',
+             filename='js/link_checker.js') }}">
+</script>
+
+</body>
+</html>

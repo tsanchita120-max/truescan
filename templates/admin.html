@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TRUESCAN - Admin Panel</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+
+<body>
+
+<div class="admin-page">
+
+    <!-- HEADER -->
+    <header class="admin-header">
+
+        <div class="brand-area">
+
+            <img src="{{ url_for('static',
+                    filename='images/truescan-logo.png') }}"
+                 alt="TRUESCAN Logo">
+
+            <div>
+                <h2>TRUESCAN</h2>
+                <p>ADMINISTRATION PANEL</p>
+            </div>
+
+        </div>
+
+        <div class="admin-actions">
+
+            <span class="admin-badge">
+                🛡️ Administrator
+            </span>
+
+            <a href="{{ url_for('dashboard') }}"
+               class="dashboard-link">
+                Dashboard
+            </a>
+
+            <a href="{{ url_for('logout') }}"
+               class="logout-link">
+                Logout
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- MAIN -->
+    <main class="admin-main">
+
+        <div class="page-title">
+
+            <div class="title-icon">
+                ⚙️
+            </div>
+
+            <div>
+                <h1>Admin Panel</h1>
+                <p>Manage TRUESCAN users, scans and scam reports.</p>
+            </div>
+
+        </div>
+
+
+        <!-- STATISTICS -->
+        <section class="stats-grid">
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    👥
+                </div>
+
+                <div>
+                    <small>Total Users</small>
+                    <strong>{{ total_users }}</strong>
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🔍
+                </div>
+
+                <div>
+                    <small>Total Scans</small>
+                    <strong>{{ total_scans }}</strong>
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🚨
+                </div>
+
+                <div>
+                    <small>Total Reports</small>
+                    <strong>{{ total_reports }}</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- USERS -->
+        <section class="admin-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <h2>Registered Users</h2>
+                    <p>Users registered in TRUESCAN.</p>
+                </div>
+
+                <span>
+                    {{ total_users }} Users
+                </span>
+
+            </div>
+
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for user in users %}
+
+                        <tr>
+
+                            <td>
+                                {{ user["id"] }}
+                            </td>
+
+                            <td>
+                                {{ user["name"] }}
+                            </td>
+
+                            <td>
+                                {{ user["email"] }}
+                            </td>
+
+                            <td>
+                                {{ user["role"] }}
+                            </td>
+
+                            <td>
+                                <span class="active-badge">
+                                    Active
+                                </span>
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- REPORTS -->
+        <section class="admin-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <h2>Scam Reports</h2>
+                    <p>Reports submitted by TRUESCAN users.</p>
+                </div>
+
+                <span>
+                    {{ total_reports }} Reports
+                </span>
+
+            </div>
+
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>ID</th>
+                            <th>Category</th>
+                            <th>URL</th>
+                            <th>Message</th>
+                            <th>Date</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for report in reports %}
+
+                        <tr>
+
+                            <td>
+                                {{ report["id"] }}
+                            </td>
+
+                            <td>
+                                {{ report["category"] }}
+                            </td>
+
+                            <td class="url-cell">
+                                {{ report["url"] or "N/A" }}
+                            </td>
+
+                            <td class="message-cell">
+                                {{ report["message"] }}
+                            </td>
+
+                            <td>
+                                {{ report["created_at"] }}
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- ADMIN SECURITY -->
+        <section class="admin-security">
+
+            <div class="security-icon">
+                🔐
+            </div>
+
+            <div>
+                <h3>Administrator Security</h3>
+
+                <p>
+                    This panel is restricted to authorized administrators.
+                    Keep your administrator credentials secure.
+                </p>
+            </div>
+
+        </section>
+
+
+        <a href="{{ url_for('dashboard') }}"
+           class="back-dashboard">
+            ← Back to Dashboard
+        </a>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer>
+
+        <p>© 2026 TRUESCAN</p>
+        <span>Administrator Control Center</span>
+
+    </footer>
+
+</div>
+
+</body>
+</html>

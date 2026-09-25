@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>TRUESCAN</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/splash.css') }}">
+
+</head>
+
+<body>
+
+    <div class="splash-container">
+
+        <!-- TRUESCAN LOGO -->
+        <div class="logo-box">
+
+            <img
+                src="{{ url_for('static', filename='images/truescan-logo.png') }}"
+                alt="TRUESCAN Logo">
+
+        </div>
+
+
+        <!-- APP NAME -->
+        <h1>
+            TRUESCAN
+        </h1>
+
+
+        <!-- SUBTITLE -->
+        <p class="subtitle">
+            QR &amp; Link Scam Detection
+        </p>
+
+
+        <!-- TAGLINE -->
+        <p class="tagline">
+
+            Scan
+
+            <span>•</span>
+
+            Detect
+
+            <span>•</span>
+
+            Protect
+
+        </p>
+
+
+        <!-- LOADING BAR -->
+        <div class="loader">
+
+            <div class="loader-bar"></div>
+
+        </div>
+
+
+        <!-- LOADING TEXT -->
+        <p class="loading-text">
+            Securing your digital world...
+        </p>
+
+    </div>
+
+
+    <!-- REDIRECT TO LOGIN -->
+    <script>
+
+        setTimeout(function () {
+
+            window.location.href = "/login";
+
+        }, 3000);
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TRUESCAN - Scan Result</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/result.css') }}">
+</head>
+
+<body>
+
+<div class="result-page">
+
+    <!-- HEADER -->
+    <header class="result-header">
+
+        <a href="{{ url_for('dashboard') }}"
+           class="back-btn">
+            ←
+        </a>
+
+        <div class="brand-area">
+
+            <img src="{{ url_for('static',
+                    filename='images/truescan-logo.png') }}"
+                 alt="TRUESCAN">
+
+            <div>
+                <h2>TRUESCAN</h2>
+                <p>SCAN • DETECT • PROTECT</p>
+            </div>
+
+        </div>
+
+        <div class="online">
+            <span></span>
+            Online
+        </div>
+
+    </header>
+
+
+    <!-- MAIN -->
+    <main class="result-main">
+
+        <div class="result-card">
+
+
+            <!-- TITLE -->
+            <div class="result-title">
+
+                <div class="result-icon">
+                    🔍
+                </div>
+
+                <div>
+                    <h1>Security Analysis</h1>
+                    <p>TRUESCAN scan result</p>
+                </div>
+
+            </div>
+
+
+            <!-- STATUS -->
+            <div class="status-card
+                {% if status == 'Dangerous' %}
+                    dangerous
+                {% elif status == 'Suspicious' %}
+                    suspicious
+                {% else %}
+                    safe
+                {% endif %}">
+
+                <div class="status-symbol">
+
+                    {% if status == 'Dangerous' %}
+                        ⚠️
+                    {% elif status == 'Suspicious' %}
+                        ⚠️
+                    {% else %}
+                        ✓
+                    {% endif %}
+
+                </div>
+
+                <div>
+
+                    <p class="status-label">
+                        SECURITY STATUS
+                    </p>
+
+                    <h2>
+                        {{ status }}
+                    </h2>
+
+                    <p>
+                        {% if status == 'Dangerous' %}
+                            This link may contain scam indicators.
+                        {% elif status == 'Suspicious' %}
+                            This link contains some suspicious indicators.
+                        {% else %}
+                            No major suspicious indicators were detected.
+                        {% endif %}
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- RISK SCORE -->
+            <div class="risk-section">
+
+                <div class="risk-header">
+
+                    <span>
+                        Risk Score
+                    </span>
+
+                    <strong>
+                        {{ score }}/100
+                    </strong>
+
+                </div>
+
+                <div class="risk-bar">
+
+                    <div class="risk-fill
+                        {% if status == 'Dangerous' %}
+                            danger-fill
+                        {% elif status == 'Suspicious' %}
+                            warning-fill
+                        {% else %}
+                            safe-fill
+                        {% endif %}"
+                        style="width: {{ score }}%;">
+                    </div>
+
+                </div>
+
+                <p class="risk-note">
+                    Higher score means higher security risk.
+                </p>
+
+            </div>
+
+
+            <!-- DETECTED DATA -->
+            <div class="detected-data">
+
+                <h3>
+                    Detected Data
+                </h3>
+
+                <div class="data-box">
+
+                    <span class="data-icon">
+                        🔗
+                    </span>
+
+                    <p>
+                        {{ result }}
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- RECOMMENDATIONS -->
+            <div class="recommendations">
+
+                <h3>
+                    🛡️ Security Recommendations
+                </h3>
+
+                {% if status == 'Dangerous' %}
+
+                <div class="recommendation danger">
+                    <span>⚠️</span>
+                    <p>Do not open this link.</p>
+                </div>
+
+                <div class="recommendation danger">
+                    <span>🔐</span>
+                    <p>Do not enter your password or OTP.</p>
+                </div>
+
+                <div class="recommendation danger">
+                    <span>💳</span>
+                    <p>Do not share banking or payment details.</p>
+                </div>
+
+                {% elif status == 'Suspicious' %}
+
+                <div class="recommendation warning">
+                    <span>⚠️</span>
+                    <p>Be careful before opening this link.</p>
+                </div>
+
+                <div class="recommendation warning">
+                    <span>🔍</span>
+                    <p>Verify the website address carefully.</p>
+                </div>
+
+                {% else %}
+
+                <div class="recommendation safe">
+                    <span>✓</span>
+                    <p>No major suspicious indicators detected.</p>
+                </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- BUTTONS -->
+            <div class="result-actions">
+
+                <a href="{{ url_for('dashboard') }}"
+                   class="dashboard-btn">
+                    ← Back to Dashboard
+                </a>
+
+                <a href="{{ url_for('history') }}"
+                   class="history-btn">
+                    📋 View Scan History
+                </a>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer>
+
+        <p>© 2026 TRUESCAN</p>
+        <span>Your Digital Safety Partner</span>
+
+    </footer>
+
+</div>
+
+</body>
+</html>

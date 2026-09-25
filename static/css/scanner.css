@@ -1,0 +1,854 @@
+/* =========================================
+   TRUESCAN - SCANNER PAGES
+   ========================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #020b14;
+    color: #ffffff;
+    min-height: 100vh;
+}
+
+.scanner-page {
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at top right, rgba(20, 100, 200, 0.15), transparent 35%),
+        radial-gradient(circle at bottom left, rgba(0, 180, 220, 0.08), transparent 35%),
+        #020b14;
+}
+
+
+/* =========================================
+   HEADER
+   ========================================= */
+
+.scanner-header {
+    min-height: 75px;
+    padding: 12px 35px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    background: rgba(4, 17, 29, 0.98);
+    border-bottom: 1px solid #17344b;
+}
+
+.back-btn {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #0a1b2a;
+    border: 1px solid #17384f;
+    border-radius: 10px;
+
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 22px;
+
+    transition: 0.3s;
+}
+
+.back-btn:hover {
+    background: #12344e;
+}
+
+
+/* =========================================
+   BRAND
+   ========================================= */
+
+.brand-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-area img {
+    width: 48px !important;
+    height: 48px !important;
+
+    min-width: 48px !important;
+    min-height: 48px !important;
+
+    max-width: 48px !important;
+    max-height: 48px !important;
+
+    object-fit: contain !important;
+    display: block;
+}
+
+.brand-area h2 {
+    font-size: 18px;
+    letter-spacing: 1px;
+}
+
+.brand-area p {
+    margin-top: 4px;
+    color: #71869a;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+}
+
+
+/* =========================================
+   ONLINE
+   ========================================= */
+
+.online {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    color: #54d99a;
+    font-size: 12px;
+}
+
+.online span {
+    width: 8px;
+    height: 8px;
+
+    display: inline-block;
+
+    border-radius: 50%;
+    background: #32d583;
+
+    box-shadow: 0 0 10px rgba(50, 213, 131, 0.7);
+}
+
+
+/* =========================================
+   MAIN
+   ========================================= */
+
+.scanner-main {
+    width: 100%;
+    max-width: 850px;
+
+    margin: 45px auto;
+    padding: 0 20px;
+}
+
+.scanner-card {
+    width: 100%;
+
+    padding: 30px;
+
+    background: rgba(6, 20, 33, 0.97);
+
+    border: 1px solid #173b55;
+    border-radius: 22px;
+
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+
+/* =========================================
+   TITLE
+   ========================================= */
+
+.scanner-title {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    margin-bottom: 25px;
+}
+
+.camera-symbol {
+    width: 55px;
+    height: 55px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 15px;
+
+    background: linear-gradient(
+        135deg,
+        #145ee8,
+        #08a9cf
+    );
+
+    font-size: 25px;
+    flex-shrink: 0;
+}
+
+.scanner-title h1 {
+    font-size: 25px;
+    margin-bottom: 6px;
+}
+
+.scanner-title p {
+    color: #71869a;
+    font-size: 12px;
+}
+
+
+/* =========================================
+   SECURITY BAR
+   ========================================= */
+
+.security-bar {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+
+    padding: 15px;
+    margin-bottom: 25px;
+
+    background: rgba(30, 125, 220, 0.06);
+
+    border: 1px solid #173b55;
+    border-radius: 13px;
+}
+
+.security-bar > span {
+    font-size: 23px;
+}
+
+.security-bar strong {
+    display: block;
+
+    font-size: 13px;
+    margin-bottom: 4px;
+}
+
+.security-bar small {
+    color: #71869a;
+    font-size: 10px;
+}
+
+
+/* =========================================
+   CAMERA
+   ========================================= */
+
+.camera-wrapper {
+    position: relative;
+
+    width: 100%;
+    max-width: 560px;
+
+    min-height: 350px;
+
+    margin: 0 auto 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #01070d;
+
+    border: 1px solid #1a425d;
+    border-radius: 18px;
+
+    overflow: hidden;
+}
+
+#reader {
+    width: 100%;
+    max-width: 520px;
+
+    margin: auto;
+}
+
+#reader video {
+    width: 100% !important;
+    max-width: 100% !important;
+
+    border-radius: 14px;
+}
+
+#reader img {
+    max-width: 100% !important;
+}
+
+.scan-corners {
+    position: absolute;
+
+    width: 220px;
+    height: 220px;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    border: 3px solid rgba(35, 160, 255, 0.8);
+    border-radius: 15px;
+
+    pointer-events: none;
+
+    z-index: 5;
+}
+
+
+/* =========================================
+   STATUS
+   ========================================= */
+
+.scan-status {
+    width: 100%;
+    max-width: 560px;
+
+    margin: 15px auto;
+
+    padding: 12px;
+
+    text-align: center;
+
+    background: #071725;
+
+    border: 1px solid #16364d;
+    border-radius: 10px;
+
+    color: #8196a8;
+    font-size: 11px;
+}
+
+.status-circle {
+    display: inline-block;
+
+    width: 8px;
+    height: 8px;
+
+    margin-right: 7px;
+
+    border-radius: 50%;
+    background: #2fd684;
+}
+
+
+/* =========================================
+   RESULT BOX
+   ========================================= */
+
+.result-box {
+    display: none;
+
+    width: 100%;
+    max-width: 560px;
+
+    margin: 20px auto;
+    padding: 20px;
+
+    background: #061521;
+
+    border: 1px solid #1c4b66;
+    border-radius: 15px;
+}
+
+.result-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    margin-bottom: 18px;
+}
+
+.result-header > span {
+    width: 35px;
+    height: 35px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: rgba(39, 211, 133, 0.12);
+
+    color: #2bd889;
+    font-weight: bold;
+}
+
+.result-header h3 {
+    font-size: 14px;
+}
+
+.result-header p {
+    margin-top: 4px;
+
+    color: #71869a;
+    font-size: 10px;
+}
+
+.qr-data {
+    padding: 13px;
+
+    background: #020b14;
+    border-radius: 10px;
+
+    margin-bottom: 15px;
+}
+
+.qr-data label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #71869a;
+    font-size: 10px;
+}
+
+.qr-data p {
+    color: #dce9f2;
+    font-size: 12px;
+
+    word-break: break-all;
+}
+
+
+/* =========================================
+   BUTTON
+   ========================================= */
+
+.analyze-btn {
+    width: 100%;
+
+    padding: 14px;
+
+    border: none;
+    border-radius: 11px;
+
+    background: linear-gradient(
+        135deg,
+        #246bff,
+        #0db4d4
+    );
+
+    color: white;
+
+    font-size: 13px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+.analyze-btn:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 25px rgba(36, 107, 255, 0.25);
+}
+
+
+/* =========================================
+   DASHBOARD BUTTON
+   ========================================= */
+
+.dashboard-btn {
+    display: block;
+
+    width: 100%;
+    max-width: 560px;
+
+    margin: 20px auto 0;
+
+    padding: 12px;
+
+    text-align: center;
+
+    background: #081a2a;
+
+    border: 1px solid #1b4058;
+    border-radius: 10px;
+
+    color: #a8bdcb;
+    text-decoration: none;
+
+    font-size: 12px;
+
+    transition: 0.3s;
+}
+
+.dashboard-btn:hover {
+    background: #0c263a;
+    color: white;
+}
+
+
+/* =========================================
+   SCANNER INFO
+   ========================================= */
+
+.scanner-info {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 12px;
+
+    margin: 25px auto 0;
+
+    max-width: 560px;
+}
+
+.scanner-info > div {
+    padding: 13px;
+
+    text-align: center;
+
+    background: #061521;
+
+    border: 1px solid #16384f;
+
+    border-radius: 11px;
+}
+
+.scanner-info span {
+    display: flex;
+
+    width: 27px;
+    height: 27px;
+
+    margin: 0 auto 8px;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #123957;
+
+    color: #64b8ff;
+
+    font-size: 11px;
+}
+
+.scanner-info p {
+    color: #8196a8;
+    font-size: 10px;
+}
+
+
+/* =========================================
+   IMAGE UPLOAD
+   ========================================= */
+
+.upload-area {
+    width: 100%;
+    max-width: 560px;
+
+    margin: auto;
+    padding: 45px 20px;
+
+    text-align: center;
+
+    border: 2px dashed #285273;
+    border-radius: 18px;
+
+    background: rgba(35, 136, 255, 0.04);
+}
+
+.upload-icon {
+    font-size: 45px;
+    margin-bottom: 15px;
+}
+
+.upload-area h3 {
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.upload-area p {
+    color: #71869a;
+    font-size: 12px;
+    margin-bottom: 20px;
+}
+
+.upload-area input[type="file"] {
+    display: none;
+}
+
+.upload-btn {
+    display: inline-block;
+
+    padding: 12px 25px;
+
+    border-radius: 10px;
+
+    background: linear-gradient(
+        135deg,
+        #246bff,
+        #0db4d4
+    );
+
+    color: white;
+
+    font-size: 13px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.preview-container {
+    display: none;
+
+    margin: 25px auto 0;
+    padding: 20px;
+
+    max-width: 300px;
+
+    text-align: center;
+
+    background: #06111d;
+
+    border: 1px solid #193850;
+    border-radius: 14px;
+}
+
+.preview-container h3 {
+    font-size: 13px;
+    margin-bottom: 12px;
+}
+
+.preview-container img {
+    width: 200px !important;
+    height: 200px !important;
+
+    max-width: 200px !important;
+    max-height: 200px !important;
+
+    object-fit: contain;
+
+    border-radius: 10px;
+    border: 1px solid #24445f;
+}
+
+#file-name {
+    margin-top: 10px;
+
+    color: #71869a;
+    font-size: 11px;
+
+    word-break: break-all;
+}
+
+
+/* =========================================
+   LINK CHECKER
+   ========================================= */
+
+.link-checker-form {
+    width: 100%;
+    max-width: 600px;
+
+    margin: 25px auto;
+}
+
+.link-checker-form label {
+    display: block;
+
+    margin-bottom: 10px;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.url-input-box {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    background: #06111d;
+
+    border: 1px solid #24445f;
+
+    border-radius: 12px;
+
+    padding: 4px 15px;
+
+    transition: 0.3s;
+}
+
+.url-input-box:focus-within {
+    border-color: #2585ff;
+
+    box-shadow:
+        0 0 15px rgba(37, 133, 255, 0.15);
+}
+
+.url-input-box span {
+    font-size: 18px;
+}
+
+.url-input-box input {
+    width: 100%;
+
+    padding: 14px 5px;
+
+    background: transparent;
+
+    border: none;
+    outline: none;
+
+    color: white;
+
+    font-size: 13px;
+}
+
+.url-input-box input::placeholder {
+    color: #62798c;
+}
+
+.form-error {
+    margin-top: 12px;
+
+    padding: 11px 14px;
+
+    border-radius: 9px;
+
+    background: rgba(255, 70, 70, 0.08);
+
+    border: 1px solid rgba(255, 70, 70, 0.25);
+
+    color: #ff7373;
+
+    font-size: 12px;
+}
+
+.link-warning {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 12px;
+
+    max-width: 600px;
+
+    margin: 25px auto 0;
+
+    padding: 15px;
+
+    border-radius: 12px;
+
+    background: rgba(255, 174, 0, 0.06);
+
+    border: 1px solid rgba(255, 174, 0, 0.18);
+}
+
+.link-warning > span {
+    font-size: 20px;
+}
+
+.link-warning strong {
+    display: block;
+
+    font-size: 13px;
+
+    margin-bottom: 5px;
+}
+
+.link-warning p {
+    margin: 0;
+
+    color: #8095a7;
+
+    font-size: 11px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================
+   FOOTER
+   ========================================= */
+
+footer {
+    padding: 25px;
+
+    text-align: center;
+
+    color: #536a7b;
+
+    font-size: 10px;
+}
+
+footer span {
+    display: block;
+
+    margin-top: 5px;
+}
+
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 700px) {
+
+    .scanner-header {
+        padding: 10px 15px;
+    }
+
+    .brand-area img {
+        width: 40px !important;
+        height: 40px !important;
+
+        min-width: 40px !important;
+        min-height: 40px !important;
+
+        max-width: 40px !important;
+        max-height: 40px !important;
+    }
+
+    .brand-area h2 {
+        font-size: 15px;
+    }
+
+    .brand-area p {
+        font-size: 7px;
+    }
+
+    .online {
+        display: none;
+    }
+
+    .scanner-main {
+        margin: 25px auto;
+        padding: 0 12px;
+    }
+
+    .scanner-card {
+        padding: 20px 15px;
+        border-radius: 17px;
+    }
+
+    .scanner-title h1 {
+        font-size: 20px;
+    }
+
+    .scanner-title p {
+        font-size: 11px;
+    }
+
+    .camera-wrapper {
+        min-height: 280px;
+    }
+
+    .scan-corners {
+        width: 180px;
+        height: 180px;
+    }
+
+    .scanner-info {
+        grid-template-columns: 1fr;
+    }
+}

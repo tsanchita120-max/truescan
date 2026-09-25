@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TRUESCAN - QR Camera Scanner</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/scanner.css') }}">
+
+    <script src="https://unpkg.com/html5-qrcode"
+            type="text/javascript"></script>
+</head>
+
+<body>
+
+<div class="scanner-page">
+
+    <!-- HEADER -->
+    <header class="scanner-header">
+
+        <a href="{{ url_for('dashboard') }}" class="back-btn">
+            ←
+        </a>
+
+        <div class="brand-area">
+
+            <img src="{{ url_for('static',
+                    filename='images/truescan-logo.png') }}"
+                 alt="TRUESCAN">
+
+            <div>
+                <h2>TRUESCAN</h2>
+                <p>SCAN • DETECT • PROTECT</p>
+            </div>
+
+        </div>
+
+        <div class="online">
+            <span></span> Online
+        </div>
+
+    </header>
+
+
+    <!-- MAIN -->
+    <main class="scanner-main">
+
+        <div class="scanner-card">
+
+            <!-- TITLE -->
+            <div class="scanner-title">
+
+                <div class="camera-symbol">
+                    📷
+                </div>
+
+                <div>
+                    <h1>QR Camera Scanner</h1>
+                    <p>
+                        Scan a QR code using your camera
+                    </p>
+                </div>
+
+            </div>
+
+
+            <!-- SECURITY BAR -->
+            <div class="security-bar">
+
+                <span>🛡️</span>
+
+                <div>
+                    <strong>Secure QR Analysis</strong>
+                    <small>
+                        Your QR data is analyzed locally before showing the result.
+                    </small>
+                </div>
+
+            </div>
+
+
+            <!-- CAMERA -->
+            <div class="camera-wrapper">
+
+                <div class="scan-corners"></div>
+
+                <div id="reader"></div>
+
+            </div>
+
+
+            <!-- STATUS -->
+            <div id="scan-status"
+                 class="scan-status">
+
+                <span class="status-circle"></span>
+
+                Camera ready. Allow camera permission to start scanning.
+
+            </div>
+
+
+            <!-- RESULT -->
+            <div id="result-box"
+                 class="result-box">
+
+                <div class="result-header">
+
+                    <span>✓</span>
+
+                    <div>
+                        <h3>QR Code Detected</h3>
+                        <p>QR data found successfully</p>
+                    </div>
+
+                </div>
+
+                <div class="qr-data">
+
+                    <label>Detected Data</label>
+
+                    <p id="qr-result"></p>
+
+                </div>
+
+                <button onclick="checkResult()"
+                        class="analyze-btn">
+
+                    🔍 Analyze QR Code
+
+                </button>
+
+            </div>
+
+
+            <!-- INFO -->
+            <div class="scanner-info">
+
+                <div>
+                    <span>1</span>
+                    <p>Point camera at QR</p>
+                </div>
+
+                <div>
+                    <span>2</span>
+                    <p>Wait for detection</p>
+                </div>
+
+                <div>
+                    <span>3</span>
+                    <p>Check security result</p>
+                </div>
+
+            </div>
+
+
+            <a href="{{ url_for('dashboard') }}"
+               class="dashboard-btn">
+
+                ← Back to Dashboard
+
+            </a>
+
+        </div>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer>
+
+        <p>© 2026 TRUESCAN</p>
+
+        <span>Your Digital Safety Partner</span>
+
+    </footer>
+
+</div>
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+<script src="{{ url_for('static', filename='js/qr_camera.js') }}"></script>
+
+
+</body>
+</html>

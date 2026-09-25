@@ -1,0 +1,313 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    background:
+        radial-gradient(
+            circle at center,
+            #0c1e35 0%,
+            #07111f 50%,
+            #030912 100%
+        );
+
+    color: #ffffff;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    overflow: hidden;
+}
+
+/* =========================
+   SPLASH CONTAINER
+========================= */
+
+.splash-container {
+    width: 100%;
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+
+    padding: 20px;
+}
+
+/* =========================
+   LOGO
+========================= */
+
+.logo-box {
+    width: 160px;
+    height: 160px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 18px;
+
+    background: transparent;
+
+    overflow: visible;
+}
+
+.logo-box img {
+    width: 150px;
+    height: 150px;
+
+    display: block;
+
+    object-fit: contain;
+    object-position: center;
+
+    background: transparent;
+
+    border: none;
+    outline: none;
+
+    filter:
+        drop-shadow(0 0 10px rgba(0, 140, 255, 0.55))
+        drop-shadow(0 0 22px rgba(0, 100, 255, 0.25));
+
+    animation: logoGlow 2.5s ease-in-out infinite;
+}
+
+/* =========================
+   LOGO ANIMATION
+========================= */
+
+@keyframes logoGlow {
+
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.025);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* =========================
+   TRUESCAN TITLE
+========================= */
+
+h1 {
+    font-size: 43px;
+
+    font-weight: 800;
+
+    letter-spacing: 7px;
+
+    line-height: 1.1;
+
+    margin-bottom: 12px;
+
+    color: #ffffff;
+
+    text-shadow:
+        0 0 15px rgba(35, 136, 255, 0.18);
+}
+
+/* =========================
+   SUBTITLE
+========================= */
+
+.subtitle {
+    font-size: 17px;
+
+    color: #c5d2e0;
+
+    margin-bottom: 14px;
+
+    line-height: 1.4;
+}
+
+/* =========================
+   TAGLINE
+========================= */
+
+.tagline {
+    font-size: 15px;
+
+    color: #2388ff;
+
+    letter-spacing: 2.5px;
+
+    margin-bottom: 30px;
+}
+
+.tagline span {
+    margin: 0 5px;
+
+    color: #4da0ff;
+}
+
+/* =========================
+   LOADER
+========================= */
+
+.loader {
+    width: 240px;
+    height: 5px;
+
+    background: #172a40;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 0 8px rgba(35, 136, 255, 0.15);
+}
+
+.loader-bar {
+    width: 0%;
+
+    height: 100%;
+
+    background: #2388ff;
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 0 10px rgba(35, 136, 255, 0.8);
+
+    animation:
+        loading 3s linear forwards;
+}
+
+/* =========================
+   LOADING ANIMATION
+========================= */
+
+@keyframes loading {
+
+    from {
+        width: 0%;
+    }
+
+    to {
+        width: 100%;
+    }
+}
+
+/* =========================
+   LOADING TEXT
+========================= */
+
+.loading-text {
+    margin-top: 14px;
+
+    font-size: 12px;
+
+    color: #71849a;
+
+    letter-spacing: 0.3px;
+}
+
+/* =========================
+   MOBILE RESPONSIVE
+========================= */
+
+@media (max-width: 600px) {
+
+    .splash-container {
+        padding: 15px;
+    }
+
+    .logo-box {
+        width: 125px;
+        height: 125px;
+
+        margin-bottom: 15px;
+    }
+
+    .logo-box img {
+        width: 120px;
+        height: 120px;
+    }
+
+    h1 {
+        font-size: 32px;
+
+        letter-spacing: 5px;
+
+        margin-bottom: 10px;
+    }
+
+    .subtitle {
+        font-size: 14px;
+
+        margin-bottom: 11px;
+    }
+
+    .tagline {
+        font-size: 12px;
+
+        letter-spacing: 1.8px;
+
+        margin-bottom: 25px;
+    }
+
+    .loader {
+        width: 190px;
+        height: 4px;
+    }
+
+    .loading-text {
+        font-size: 11px;
+
+        margin-top: 12px;
+    }
+}
+
+/* =========================
+   VERY SMALL MOBILE
+========================= */
+
+@media (max-width: 380px) {
+
+    .logo-box {
+        width: 110px;
+        height: 110px;
+    }
+
+    .logo-box img {
+        width: 105px;
+        height: 105px;
+    }
+
+    h1 {
+        font-size: 28px;
+        letter-spacing: 4px;
+    }
+
+    .subtitle {
+        font-size: 13px;
+    }
+
+    .tagline {
+        font-size: 11px;
+    }
+
+    .loader {
+        width: 170px;
+    }
+}

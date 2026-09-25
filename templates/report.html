@@ -1,0 +1,193 @@
+
+  <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TRUESCAN - Report Scam</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/report.css') }}">
+</head>
+
+<body>
+
+<div class="report-page">
+
+    <!-- HEADER -->
+    <header class="report-header">
+
+        <a href="{{ url_for('dashboard') }}" class="back-btn">
+            ←
+        </a>
+
+        <div class="brand-area">
+
+            <img src="{{ url_for('static',
+                    filename='images/truescan-logo.png') }}"
+                 alt="TRUESCAN Logo">
+
+            <div>
+                <h2>TRUESCAN</h2>
+                <p>SCAN • DETECT • PROTECT</p>
+            </div>
+
+        </div>
+
+        <div class="online">
+            <span></span> Online
+        </div>
+
+    </header>
+
+
+    <!-- MAIN -->
+    <main class="report-main">
+
+        <div class="report-card">
+
+            <div class="page-title">
+
+                <div class="title-icon">
+                    🚨
+                </div>
+
+                <div>
+                    <h1>Report Scam</h1>
+                    <p>Help us identify suspicious links and activities.</p>
+                </div>
+
+            </div>
+
+
+            <!-- SUCCESS MESSAGE -->
+            {% if success %}
+            <div class="success-message">
+                ✓ {{ success }}
+            </div>
+            {% endif %}
+
+
+            <!-- FORM -->
+            <form method="POST"
+                  action="{{ url_for('report') }}"
+                  class="report-form">
+
+                <div class="form-group">
+
+                    <label for="category">
+                        Scam Category
+                    </label>
+
+                    <select id="category"
+                            name="category"
+                            required>
+
+                        <option value="">
+                            Select scam type
+                        </option>
+
+                        <option value="QR Scam">
+                            QR Scam
+                        </option>
+
+                        <option value="Link Scam">
+                            Link Scam
+                        </option>
+
+                        <option value="Phishing">
+                            Phishing
+                        </option>
+
+                        <option value="Fake Payment">
+                            Fake Payment
+                        </option>
+
+                        <option value="Prize Scam">
+                            Prize / Reward Scam
+                        </option>
+
+                        <option value="Other">
+                            Other
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="url">
+                        Suspicious Link / URL
+                    </label>
+
+                    <input type="url"
+                           id="url"
+                           name="url"
+                           placeholder="https://example.com">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="message">
+                        Description
+                    </label>
+
+                    <textarea id="message"
+                              name="message"
+                              rows="6"
+                              placeholder="Describe what happened or why you think this is a scam..."
+                              required></textarea>
+
+                </div>
+
+
+                <div class="report-warning">
+
+                    <span>⚠️</span>
+
+                    <p>
+                        Do not enter passwords, OTPs, bank details
+                        or other private information in this form.
+                    </p>
+
+                </div>
+
+
+                <button type="submit"
+                        class="submit-btn">
+                    🚨 Submit Scam Report
+                </button>
+
+            </form>
+
+
+            <a href="{{ url_for('dashboard') }}"
+               class="dashboard-btn">
+
+                ← Back to Dashboard
+
+            </a>
+
+        </div>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer>
+
+        <p>© 2026 TRUESCAN</p>
+        <span>Your Digital Safety Partner</span>
+
+    </footer>
+
+</div>
+
+</body>
+</html> 

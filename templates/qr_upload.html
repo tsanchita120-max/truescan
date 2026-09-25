@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TRUESCAN - QR Image Upload</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/scanner.css') }}">
+</head>
+
+<body>
+
+<div class="scanner-page">
+
+    <!-- HEADER -->
+    <header class="scanner-header">
+
+        <a href="{{ url_for('dashboard') }}" class="back-btn">
+            ←
+        </a>
+
+        <div class="brand-area">
+
+            <img src="{{ url_for('static', filename='images/truescan-logo.png') }}"
+                 alt="TRUESCAN Logo">
+
+            <div>
+                <h2>TRUESCAN</h2>
+                <p>SCAN • DETECT • PROTECT</p>
+            </div>
+
+        </div>
+
+        <div class="online">
+            <span></span>
+            Online
+        </div>
+
+    </header>
+
+
+    <!-- MAIN -->
+    <main class="scanner-main">
+
+        <div class="scanner-card">
+
+            <!-- TITLE -->
+            <div class="scanner-title">
+
+                <div class="camera-symbol">
+                    🖼️
+                </div>
+
+                <div>
+                    <h1>QR Image Upload</h1>
+
+                    <p>
+                        Upload a QR code image to analyze it.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <!-- SECURITY MESSAGE -->
+            <div class="security-bar">
+
+                <span>🛡️</span>
+
+                <div>
+
+                    <strong>
+                        Secure QR Analysis
+                    </strong>
+
+                    <small>
+                        Upload an image and check the QR code for suspicious content.
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <!-- UPLOAD -->
+            <form method="POST"
+                  action="{{ url_for('qr_upload') }}"
+                  enctype="multipart/form-data">
+
+                <div class="upload-area">
+
+                    <div class="upload-icon">
+                        📁
+                    </div>
+
+                    <h3>
+                        Upload QR Code Image
+                    </h3>
+
+                    <p>
+                        Select PNG, JPG or JPEG image
+                    </p>
+
+
+                    <input
+                        type="file"
+                        id="qr_image"
+                        name="qr_image"
+                        accept="image/png,image/jpeg,image/jpg"
+                        required
+                        onchange="previewImage(event)">
+
+
+                    <label for="qr_image"
+                           class="upload-btn">
+
+                        📂 Choose QR Image
+
+                    </label>
+
+                </div>
+
+
+                <!-- PREVIEW -->
+                <div id="preview-container"
+                     class="preview-container">
+
+                    <h3>
+                        Image Preview
+                    </h3>
+
+                    <img id="preview"
+                         src=""
+                         alt="QR Preview">
+
+                    <p id="file-name"></p>
+
+                </div>
+
+
+                <!-- ANALYZE -->
+                <button type="submit"
+                        class="analyze-btn">
+
+                    🔍 Analyze QR Image
+
+                </button>
+
+            </form>
+
+
+            <!-- BACK -->
+            <a href="{{ url_for('dashboard') }}"
+               class="dashboard-btn">
+
+                ← Back to Dashboard
+
+            </a>
+
+        </div>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer>
+
+        <p>© 2026 TRUESCAN</p>
+
+        <span>
+            Your Digital Safety Partner
+        </span>
+
+    </footer>
+
+</div>
+
+
+<script>
+
+function previewImage(event) {
+
+    const file = event.target.files[0];
+
+    const preview =
+        document.getElementById("preview");
+
+    const container =
+        document.getElementById("preview-container");
+
+    const fileName =
+        document.getElementById("file-name");
+
+
+    if (file) {
+
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+
+            preview.src = e.target.result;
+
+            container.style.display = "block";
+
+            fileName.textContent =
+                file.name;
+
+        };
+
+        reader.readAsDataURL(file);
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
