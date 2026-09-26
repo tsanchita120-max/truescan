@@ -1,0 +1,537 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body {
+
+    min-height: 100vh;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background:
+        linear-gradient(
+            135deg,
+            #020817,
+            #071a33,
+            #03101f
+        );
+
+    color: white;
+
+}
+
+
+/* ================= PAGE ================= */
+
+.admin-page {
+
+    min-height: 100vh;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 25px;
+
+}
+
+
+/* ================= CARD ================= */
+
+.admin-card {
+
+    width: 100%;
+
+    max-width: 440px;
+
+    padding: 40px;
+
+    background:
+        rgba(13, 24, 40, 0.98);
+
+    border:
+        1px solid
+        rgba(70, 130, 190, 0.35);
+
+    border-radius: 24px;
+
+    box-shadow:
+        0 25px 70px
+        rgba(0, 0, 0, 0.55),
+
+        0 0 40px
+        rgba(30, 130, 255, 0.08);
+
+    text-align: center;
+
+}
+
+
+/* ================= LOGO ================= */
+
+.admin-logo {
+
+    width: 90px;
+
+    height: 90px;
+
+    object-fit: contain;
+
+    display: block;
+
+    margin:
+        0 auto 18px;
+
+    filter:
+        drop-shadow(
+            0 0 10px
+            rgba(0, 140, 255, 0.65)
+        )
+
+        drop-shadow(
+            0 0 25px
+            rgba(0, 100, 255, 0.25)
+        );
+
+}
+
+
+/* ================= BADGE ================= */
+
+.admin-badge {
+
+    display: inline-block;
+
+    padding:
+        6px 13px;
+
+    margin-bottom: 12px;
+
+    border-radius: 20px;
+
+    background:
+        rgba(35, 136, 255, 0.10);
+
+    border:
+        1px solid
+        rgba(35, 136, 255, 0.30);
+
+    color: #55aaff;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.5px;
+
+}
+
+
+/* ================= TITLE ================= */
+
+.admin-card h1 {
+
+    font-size: 30px;
+
+    font-weight: 700;
+
+    color: #ffffff;
+
+    margin-bottom: 8px;
+
+}
+
+
+.subtitle {
+
+    font-size: 13px;
+
+    line-height: 1.5;
+
+    color: #91a4b8;
+
+    margin-bottom: 25px;
+
+}
+
+
+/* ================= ERROR ================= */
+
+.error-message {
+
+    width: 100%;
+
+    padding:
+        11px 14px;
+
+    margin-bottom: 18px;
+
+    background:
+        rgba(255, 70, 70, 0.10);
+
+    border:
+        1px solid
+        rgba(255, 70, 70, 0.35);
+
+    border-radius: 9px;
+
+    color: #ff8585;
+
+    font-size: 13px;
+
+    text-align: left;
+
+}
+
+
+/* ================= LABEL ================= */
+
+.admin-card label {
+
+    display: block;
+
+    text-align: left;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    color: #c8d5e2;
+
+    margin:
+        17px 0 8px;
+
+}
+
+
+/* ================= INPUT ================= */
+
+.input-box {
+
+    width: 100%;
+
+    height: 52px;
+
+    display: flex;
+
+    align-items: center;
+
+    padding:
+        0 14px;
+
+    gap: 10px;
+
+    background: #091827;
+
+    border:
+        1px solid
+        #24425e;
+
+    border-radius: 11px;
+
+    transition: 0.25s;
+
+}
+
+
+.input-box:focus-within {
+
+    border-color:
+        #2388ff;
+
+    box-shadow:
+
+        0 0 0 3px
+        rgba(35, 136, 255, 0.10),
+
+        0 0 15px
+        rgba(35, 136, 255, 0.12);
+
+}
+
+
+/* ================= ICON ================= */
+
+.input-icon {
+
+    width: 22px;
+
+    color: #2388ff;
+
+    font-size: 17px;
+
+    text-align: center;
+
+}
+
+
+/* ================= INPUT ================= */
+
+.input-box input {
+
+    flex: 1;
+
+    width: 100%;
+
+    height: 100%;
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+}
+
+
+.input-box input::placeholder {
+
+    color: #60758a;
+
+}
+
+
+/* ================= SHOW BUTTON ================= */
+
+.show-btn {
+
+    width: 28px;
+
+    height: 30px;
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    color: #7f95aa;
+
+    cursor: pointer;
+
+    font-size: 15px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+
+.show-btn:hover {
+
+    color: #2388ff;
+
+}
+
+
+/* ================= LOGIN BUTTON ================= */
+
+.admin-login-btn {
+
+    width: 100%;
+
+    height: 53px;
+
+    margin-top: 25px;
+
+    border: none;
+
+    border-radius: 11px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #246bff,
+            #0db4d4
+        );
+
+    color: white;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.3px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 25px
+        rgba(35, 136, 255, 0.25);
+
+    transition: 0.25s;
+
+}
+
+
+.admin-login-btn:hover {
+
+    transform:
+        translateY(-1px);
+
+    box-shadow:
+        0 12px 30px
+        rgba(35, 136, 255, 0.35);
+
+}
+
+
+/* ================= BACK ================= */
+
+.back-login {
+
+    margin-top: 22px;
+
+}
+
+
+.back-login a {
+
+    color: #2388ff;
+
+    font-size: 13px;
+
+    text-decoration: none;
+
+}
+
+
+.back-login a:hover {
+
+    text-decoration: underline;
+
+}
+
+
+/* ================= SECURITY ================= */
+
+.security-box {
+
+    width: 100%;
+
+    margin-top: 25px;
+
+    padding: 13px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    text-align: left;
+
+    background:
+        rgba(19, 45, 68, 0.45);
+
+    border:
+        1px solid
+        #203c54;
+
+    border-radius: 10px;
+
+}
+
+
+.security-box > span {
+
+    font-size: 19px;
+
+}
+
+
+.security-box strong {
+
+    display: block;
+
+    color: #9fc9ee;
+
+    font-size: 12px;
+
+    margin-bottom: 3px;
+
+}
+
+
+.security-box p {
+
+    color: #64798c;
+
+    font-size: 10px;
+
+}
+
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 500px) {
+
+    .admin-page {
+
+        padding: 18px;
+
+    }
+
+
+    .admin-card {
+
+        padding:
+            30px 22px;
+
+        border-radius: 20px;
+
+    }
+
+
+    .admin-logo {
+
+        width: 78px;
+
+        height: 78px;
+
+    }
+
+
+    .admin-card h1 {
+
+        font-size: 26px;
+
+    }
+
+
+    .subtitle {
+
+        font-size: 12px;
+
+    }
+
+
+    .input-box {
+
+        height: 50px;
+
+    }
+
+
+    .admin-login-btn {
+
+        height: 50px;
+
+    }
+
+}

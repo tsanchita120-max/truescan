@@ -1,141 +1,343 @@
 let scannedValue = "";
 let scanner = null;
+let scanCompleted = false;
+
+
+// =====================================================
+// QR SUCCESS
+// =====================================================
 
 function onScanSuccess(decodedText) {
 
-    scannedValue = decodedText;
+    if (scanCompleted) {
+        return;
+    }
 
-    const resultBox = document.getElementById("result-box");
-    const qrResult = document.getElementById("qr-result");
-    const status = document.getElementById("scan-status");
+    if (!decodedText) {
+        return;
+    }
 
-    qrResult.textContent = decodedText;
+    scannedValue = decodedText.trim();
+    scanCompleted = true;
 
-    resultBox.style.display = "block";
+    console.log("QR DETECTED:", scannedValue);
 
-    status.innerHTML =
-        '<span class="status-circle"></span> QR Code detected successfully!';
+    const resultBox =
+        document.getElementById("result-box");
 
-    status.style.color = "#29d889";
+    const qrResult =
+        document.getElementById("qr-result");
+
+    const status =
+        document.getElementById("scan-status");
+
+
+    // Show detected QR
+    if (qrResult) {
+
+        qrResult.textContent =
+            scannedValue;
+    }
+
+
+    // Show result box
+    if (resultBox) {
+
+        resultBox.style.display =
+            "block";
+    }
+
+
+    // Update status
+    if (status) {
+
+        status.innerHTML =
+            '<span class="status-circle"></span> QR Code detected successfully!';
+
+        status.style.color =
+            "#29d889";
+    }
+
+
+    // Stop camera
+    stopCamera();
+
+
+    // Send to Python
+    setTimeout(function () {
+
+        sendToPython();
+
+    }, 400);
 }
+
+
+// =====================================================
+// QR FAILURE
+// =====================================================
 
 function onScanFailure(error) {
-    // QR code not detected yet
+
+    // Continuous scanner errors are ignored.
 }
+
+
+// =====================================================
+// START CAMERA
+// =====================================================
 
 function startCamera() {
 
-    const reader = document.getElementById("reader");
-    const status = document.getElementById("scan-status");
+    if (typeof Html5Qrcode === "undefined") {
+
+        const status =
+            document.getElementById(
+                "scan-status"
+            );
+
+        if (status) {
+
+            status.textContent =
+                "Camera scanner library could not load.";
+        }
+
+        return;
+    }
+
+
+    const reader =
+        document.getElementById("reader");
+
 
     if (!reader) {
-        console.error("Reader element not found");
+
+        console.error(
+            "QR reader element not found."
+        );
+
         return;
     }
 
-    if (typeof Html5Qrcode === "undefined") {
-        status.textContent =
-            "QR scanner library is not loaded.";
-        return;
-    }
 
-    scanner = new Html5Qrcode("reader");
+    scanner =
+        new Html5Qrcode("reader");
+
 
     const config = {
+
         fps: 10,
+
         qrbox: {
             width: 250,
             height: 250
         },
+
         aspectRatio: 1.0
     };
 
+
     scanner.start(
-        { facingMode: "environment" },
+
+        {
+            facingMode: "environment"
+        },
+
         config,
+
         onScanSuccess,
+
         onScanFailure
+
     )
+
     .then(function () {
 
-        status.innerHTML =
-            '<span class="status-circle"></span> Camera is active. Point it at a QR code.';
+        console.log(
+            "Camera started successfully."
+        );
 
-        status.style.color = "#29d889";
+
+        const status =
+            document.getElementById(
+                "scan-status"
+            );
+
+
+        if (status) {
+
+            status.innerHTML =
+                '<span class="status-circle"></span> Camera is active. Point it at a QR code.';
+
+            status.style.color =
+                "#29d889";
+        }
 
     })
+
     .catch(function (error) {
 
-        console.error("Camera error:", error);
+        console.error(
+            "CAMERA ERROR:",
+            error
+        );
 
-        status.textContent =
-            "Camera could not start. Please allow camera access.";
 
-        status.style.color = "#ff6b6b";
+        const status =
+            document.getElementById(
+                "scan-status"
+            );
+
+
+        if (status) {
+
+            status.textContent =
+                "Camera permission denied or unavailable.";
+
+            status.style.color =
+                "#ff6b6b";
+        }
     });
 }
 
 
-/* Start camera after page loads */
-document.addEventListener("DOMContentLoaded", function () {
+// =====================================================
+// STOP CAMERA
+// =====================================================
 
-    setTimeout(function () {
-        startCamera();
-    }, 300);
+function stopCamera() {
 
-});
+    if (!scanner) {
+        return;
+    }
 
+
+    scanner.stop()
+
+        .then(function () {
+
+            console.log(
+                "Camera stopped."
+            );
+
+        })
+
+        .catch(function (error) {
+
+            console.log(
+                "Camera stop error:",
+                error
+            );
+        });
+}
+
+
+// =====================================================
+// SEND QR TO PYTHON BACKEND
+// =====================================================
+
+function sendToPython() {
+
+    if (!scannedValue) {
+
+        console.error(
+            "No QR data available."
+        );
+
+        return;
+    }
+
+
+    console.log(
+        "Sending QR to Python:",
+        scannedValue
+    );
+
+
+    // Create POST form
+    const form =
+        document.createElement("form");
+
+
+    form.method =
+        "POST";
+
+
+    form.action =
+        "/analyze-qr";
+
+
+    // QR data
+    const input =
+        document.createElement("input");
+
+
+    input.type =
+        "hidden";
+
+
+    input.name =
+        "qr_data";
+
+
+    input.value =
+        scannedValue;
+
+
+    form.appendChild(
+        input
+    );
+
+
+    document.body.appendChild(
+        form
+    );
+
+
+    // Submit to Flask
+    form.submit();
+}
+
+
+// =====================================================
+// MANUAL ANALYZE BUTTON
+// =====================================================
 
 function checkResult() {
 
     if (!scannedValue) {
-        alert("No QR code detected.");
+
+        alert(
+            "No QR code detected."
+        );
+
         return;
     }
 
-    let risk = 10;
 
-    const suspiciousWords = [
-        "free",
-        "winner",
-        "prize",
-        "claim",
-        "reward",
-        "verify",
-        "urgent",
-        "login"
-    ];
-
-    const text = scannedValue.toLowerCase();
-
-    suspiciousWords.forEach(function(word) {
-
-        if (text.includes(word)) {
-            risk += 15;
-        }
-
-    });
-
-    if (risk > 100) {
-        risk = 100;
-    }
-
-    let status;
-
-    if (risk >= 50) {
-        status = "Dangerous";
-    }
-    else if (risk >= 30) {
-        status = "Suspicious";
-    }
-    else {
-        status = "Safe";
-    }
-
-    alert(
-        "QR Analysis\n\n" +
-        "Data: " + scannedValue +
-        "\n\nRisk Score: " + risk + "/100" +
-        "\nStatus: " + status
-    );
+    sendToPython();
 }
+
+
+// =====================================================
+// PAGE LOAD
+// =====================================================
+
+window.addEventListener(
+    "load",
+    function () {
+
+        console.log(
+            "TRUESCAN QR CAMERA LOADED"
+        );
+
+
+        setTimeout(
+            function () {
+
+                startCamera();
+
+            },
+            500
+        );
+    }
+);

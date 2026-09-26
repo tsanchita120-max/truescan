@@ -1,7 +1,8 @@
-import cv2
+﻿import cv2
 
 
 def detect_qr_type(data):
+
     if not data:
         return "Unknown"
 
@@ -13,16 +14,16 @@ def detect_qr_type(data):
     if text.startswith("upi://"):
         return "UPI Payment"
 
+    if text.startswith("wifi:"):
+        return "Wi-Fi Network"
+
     if text.startswith("mailto:"):
         return "Email"
 
     if text.startswith("tel:"):
         return "Phone Number"
 
-    if text.startswith("wifi:"):
-        return "Wi-Fi"
-
-    if text.startswith("smsto:") or text.startswith("sms:"):
+    if text.startswith("sms:") or text.startswith("smsto:"):
         return "SMS"
 
     if text.startswith("begin:vcard"):
@@ -40,7 +41,7 @@ def decode_qr(image_path):
             "success": False,
             "data": None,
             "type": "Unknown",
-            "message": "Unable to read image."
+            "message": "Unable to read the uploaded image."
         }
 
     detector = cv2.QRCodeDetector()
@@ -55,9 +56,39 @@ def decode_qr(image_path):
             "message": "QR code detected successfully."
         }
 
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    data, points, _ = detector.detectAndDecode(gray)
+
+    if data:
+        return {
+            "success": True,
+            "data": data,
+            "type": detect_qr_type(data),
+            "message": "QR code detected successfully."
+        }
+
+    resized = cv2.resize(
+        image,
+        None,
+        fx=1.5,
+        fy=1.5,
+        interpolation=cv2.INTER_CUBIC
+    )
+
+    data, points, _ = detector.detectAndDecode(resized)
+
+    if data:
+        return {
+            "success": True,
+            "data": data,
+            "type": detect_qr_type(data),
+            "message": "QR code detected successfully."
+        }
+
     return {
         "success": False,
         "data": None,
         "type": "Unknown",
-        "message": "No readable QR code found."
+        "message": "No readable QR code found in the image."
     }

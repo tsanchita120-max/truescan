@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta name="viewport"
@@ -10,16 +11,20 @@
     <title>TRUESCAN - Dashboard</title>
 
     <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/dashboard.css') }}">
+          href="{{ url_for('static', filename='css/dashboard.css', v='3') }}">
+
 </head>
+
 
 <body>
 
-<div class="dashboard-page">
+
+<div class="app">
+
 
     <!-- ================= HEADER ================= -->
 
-    <header class="top-header">
+    <header class="app-header">
 
         <div class="brand">
 
@@ -27,26 +32,38 @@
                 src="{{ url_for('static', filename='images/truescan-logo.png') }}"
                 alt="TRUESCAN Logo">
 
-            <div>
+            <div class="brand-text">
+
                 <h2>TRUESCAN</h2>
-                <span>Scan • Detect • Protect</span>
+
+                <span>
+                    Scan • Detect • Protect
+                </span>
+
             </div>
 
         </div>
 
 
-        <div class="header-actions">
+        <div class="header-icons">
 
-            <a href="{{ url_for('profile') }}"
-               class="notification"
-               title="Notifications">
+            <a
+                href="{{ url_for('profile') }}"
+                class="header-icon"
+                title="Notifications">
+
                 🔔
+
             </a>
 
-            <a href="{{ url_for('profile') }}"
-               class="profile-icon"
-               title="Profile">
+
+            <a
+                href="{{ url_for('profile') }}"
+                class="header-icon"
+                title="Profile">
+
                 👤
+
             </a>
 
         </div>
@@ -54,289 +71,315 @@
     </header>
 
 
-    <!-- ================= WELCOME ================= -->
 
-    <section class="welcome-section">
+    <!-- ================= MAIN ================= -->
 
-        <div>
+    <main class="main-content">
 
-            <p class="small-title">
+
+        <!-- WELCOME -->
+
+        <section class="welcome">
+
+            <span class="welcome-label">
                 SECURITY DASHBOARD
-            </p>
+            </span>
+
 
             <h1>
-                Welcome to <span>TRUESCAN</span>
+                Welcome to
+                <span>TRUESCAN</span>
             </h1>
+
 
             <p>
                 Protect yourself from QR codes and suspicious links.
             </p>
 
-        </div>
-
-    </section>
+        </section>
 
 
-    <!-- ================= SECURITY STATUS ================= -->
 
-    <section class="security-status">
+        <!-- SECURITY STATUS -->
 
-        <div class="status-icon">
-            🛡️
-        </div>
+        <section class="security-card">
 
-        <div class="status-text">
-
-            <h3>
-                You're Protected
-            </h3>
-
-            <p>
-                TRUESCAN is ready to analyze suspicious QR codes and links.
-            </p>
-
-        </div>
-
-        <div class="status-dot">
-            ● Online
-        </div>
-
-    </section>
-
-
-    <!-- ================= SECURITY TOOLS ================= -->
-
-    <h2 class="section-title">
-        Security Tools
-    </h2>
-
-
-    <div class="feature-grid">
-
-
-        <!-- ================= QR CAMERA ================= -->
-
-        <a href="{{ url_for('qr_camera') }}"
-           class="feature-card">
-
-            <div class="feature-icon">
-                📷
+            <div class="shield">
+                🛡️
             </div>
 
-            <div class="feature-content">
+
+            <div class="security-info">
 
                 <h3>
-                    QR Camera Scan
+                    You're Protected
                 </h3>
 
                 <p>
-                    Scan QR code using your camera.
+                    TRUESCAN is ready to analyze suspicious QR codes and links.
                 </p>
 
-                <span class="feature-link">
-                    Open Camera →
-                </span>
+            </div>
+
+
+            <div class="online">
+
+                <span></span>
+
+                Online
 
             </div>
 
-            <span class="arrow">
-                →
+        </section>
+
+
+
+        <!-- SECURITY TOOLS -->
+
+        <div class="section-heading">
+
+            <h2>
+                Security Tools
+            </h2>
+
+            <span>
+                3 Tools
             </span>
 
-        </a>
+        </div>
 
 
-        <!-- ================= QR IMAGE UPLOAD ================= -->
 
-        <a href="{{ url_for('qr_upload') }}"
-           class="feature-card">
-
-            <div class="feature-icon upload-icon">
-                🖼️
-            </div>
-
-            <div class="feature-content">
-
-                <h3>
-                    QR Image Upload
-                </h3>
-
-                <p>
-                    Upload a QR image and check it for suspicious content.
-                </p>
-
-                <span class="feature-link">
-                    Upload Image →
-                </span>
-
-            </div>
-
-            <span class="arrow">
-                →
-            </span>
-
-        </a>
+        <div class="tools">
 
 
-        <!-- ================= LINK CHECKER ================= -->
+            <!-- QR CAMERA -->
 
-        <a href="{{ url_for('link_checker') }}"
-           class="feature-card">
+            <a
+                href="{{ url_for('qr_camera') }}"
+                class="tool-card">
 
-            <div class="feature-icon link-icon">
-                🔗
-            </div>
-
-            <div class="feature-content">
-
-                <h3>
-                    Link Scam Checker
-                </h3>
-
-                <p>
-                    Check a website link for possible scam indicators.
-                </p>
-
-                <span class="feature-link">
-                    Check Link →
-                </span>
-
-            </div>
-
-            <span class="arrow">
-                →
-            </span>
-
-        </a>
+                <div class="tool-icon camera">
+                    📷
+                </div>
 
 
-    </div>
+                <div class="tool-info">
+
+                    <h3>
+                        QR Camera Scan
+                    </h3>
+
+                    <p>
+                        Scan a QR code using your camera.
+                    </p>
+
+                    <span class="tool-action">
+
+                        Open Camera
+
+                        <b>→</b>
+
+                    </span>
+
+                </div>
+
+            </a>
 
 
-    <!-- ================= QUICK ACTIONS ================= -->
 
-    <h2 class="section-title quick-title">
-        Quick Actions
-    </h2>
+            <!-- QR UPLOAD -->
+
+            <a
+                href="{{ url_for('qr_upload') }}"
+                class="tool-card">
+
+                <div class="tool-icon upload">
+                    🖼️
+                </div>
 
 
-    <div class="quick-grid">
+                <div class="tool-info">
+
+                    <h3>
+                        QR Image Upload
+                    </h3>
+
+                    <p>
+                        Upload a QR image and check it for suspicious content.
+                    </p>
+
+                    <span class="tool-action">
+
+                        Upload Image
+
+                        <b>→</b>
+
+                    </span>
+
+                </div>
+
+            </a>
 
 
-        <!-- HISTORY -->
 
-        <a href="{{ url_for('history') }}"
-           class="quick-card">
+            <!-- LINK CHECKER -->
 
-            <div class="quick-icon">
+            <a
+                href="{{ url_for('link_checker') }}"
+                class="tool-card">
+
+                <div class="tool-icon link">
+                    🔗
+                </div>
+
+
+                <div class="tool-info">
+
+                    <h3>
+                        Link Scam Checker
+                    </h3>
+
+                    <p>
+                        Check a website link for possible scam indicators.
+                    </p>
+
+                    <span class="tool-action">
+
+                        Check Link
+
+                        <b>→</b>
+
+                    </span>
+
+                </div>
+
+            </a>
+
+
+        </div>
+
+
+
+        <!-- RECENT SCANS -->
+
+        <div class="section-heading recent-heading">
+
+            <h2>
+                Recent Scans
+            </h2>
+
+
+            <a href="{{ url_for('history') }}">
+                View All
+            </a>
+
+        </div>
+
+
+
+        <div class="empty-history">
+
+            <div class="history-icon">
                 📋
             </div>
 
-            <div>
 
-                <h3>
-                    Scan History
-                </h3>
+            <h3>
+                No recent scans
+            </h3>
 
-                <p>
-                    View your previous scans
-                </p>
-
-            </div>
-
-            <span>
-                →
-            </span>
-
-        </a>
-
-
-        <!-- REPORT -->
-
-        <a href="{{ url_for('report') }}"
-           class="quick-card">
-
-            <div class="quick-icon">
-                🚨
-            </div>
-
-            <div>
-
-                <h3>
-                    Report Scam
-                </h3>
-
-                <p>
-                    Report suspicious activity
-                </p>
-
-            </div>
-
-            <span>
-                →
-            </span>
-
-        </a>
-
-
-        <!-- PROFILE -->
-
-        <a href="{{ url_for('profile') }}"
-           class="quick-card">
-
-            <div class="quick-icon">
-                👤
-            </div>
-
-            <div>
-
-                <h3>
-                    My Profile
-                </h3>
-
-                <p>
-                    Manage your account
-                </p>
-
-            </div>
-
-            <span>
-                →
-            </span>
-
-        </a>
-
-
-    </div>
-
-
-    <!-- ================= FOOTER ================= -->
-
-    <footer>
-
-        <div>
-            <p>
-                © 2026 TRUESCAN
-            </p>
 
             <p>
-                Your Digital Safety Partner
+                Your scanned QR codes and links will appear here.
             </p>
+
         </div>
 
-        <a href="{{ url_for('logout') }}">
-            Logout
+
+    </main>
+
+
+
+    <!-- ================= BOTTOM NAV ================= -->
+
+    <nav class="bottom-nav">
+
+
+        <a
+            href="{{ url_for('dashboard') }}"
+            class="nav-item active">
+
+            <span class="nav-icon">
+                🏠
+            </span>
+
+            <span>
+                Home
+            </span>
+
         </a>
 
-    </footer>
+
+
+        <a
+            href="{{ url_for('history') }}"
+            class="nav-item">
+
+            <span class="nav-icon">
+                📋
+            </span>
+
+            <span>
+                History
+            </span>
+
+        </a>
+
+
+
+        <a
+            href="{{ url_for('report') }}"
+            class="nav-item">
+
+            <span class="nav-icon">
+                🚨
+            </span>
+
+            <span>
+                Report
+            </span>
+
+        </a>
+
+
+
+        <a
+            href="{{ url_for('profile') }}"
+            class="nav-item">
+
+            <span class="nav-icon">
+                👤
+            </span>
+
+            <span>
+                Profile
+            </span>
+
+        </a>
+
+
+    </nav>
 
 
 </div>
 
 
-<!-- ================= DASHBOARD JS ================= -->
 
-<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script
+    src="{{ url_for('static', filename='js/dashboard.js', v='3') }}">
+</script>
+
 
 </body>
 

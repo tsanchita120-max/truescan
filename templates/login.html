@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,6 +11,7 @@
 
     <title>TRUESCAN - Login</title>
 
+    <!-- CONNECT CSS -->
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/login.css') }}">
 
@@ -28,12 +30,16 @@
              alt="TRUESCAN Logo">
 
 
+        <!-- TITLE -->
+
         <h1>Welcome Back</h1>
 
         <p class="welcome">
             Login to your TRUESCAN account
         </p>
 
+
+        <!-- ERROR -->
 
         {% if error %}
 
@@ -44,10 +50,12 @@
         {% endif %}
 
 
-        <!-- LOGIN FORM -->
+        <!-- USER LOGIN -->
 
         <form method="POST"
               action="{{ url_for('login') }}">
+
+            <!-- EMAIL -->
 
             <label>Email Address</label>
 
@@ -63,6 +71,8 @@
 
             </div>
 
+
+            <!-- PASSWORD -->
 
             <label>Password</label>
 
@@ -81,11 +91,15 @@
                     type="button"
                     class="show-btn"
                     onclick="showPassword()">
+
                     👁
+
                 </button>
 
             </div>
 
+
+            <!-- FORGOT -->
 
             <div class="forgot">
 
@@ -95,6 +109,8 @@
 
             </div>
 
+
+            <!-- LOGIN -->
 
             <button type="submit"
                     class="login-btn">
@@ -106,12 +122,16 @@
         </form>
 
 
+        <!-- DIVIDER -->
+
         <div class="divider">
 
             <span>OR</span>
 
         </div>
 
+
+        <!-- REGISTER -->
 
         <p class="register-text">
 
@@ -124,6 +144,34 @@
         </p>
 
 
+        <!-- ADMIN LOGIN -->
+
+        <div class="admin-section">
+
+            <div class="admin-divider">
+
+                <span>ADMIN ACCESS</span>
+
+            </div>
+
+            <a href="{{ url_for('admin_login') }}"
+               class="admin-login-btn">
+
+                <span class="admin-icon">
+                    🔐
+                </span>
+
+                <span>
+                    Admin Login
+                </span>
+
+            </a>
+
+        </div>
+
+
+        <!-- SECURITY -->
+
         <p class="security">
 
             🛡 Your security is our priority
@@ -134,6 +182,8 @@
 
 </div>
 
+
+<!-- PASSWORD SCRIPT -->
 
 <script>
 
@@ -159,3 +209,4 @@ function showPassword() {
 </body>
 
 </html>
+```

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>TRUESCAN - Admin Login</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/admin_login.css') }}">
+
+</head>
+
+
+<body>
+
+
+<div class="admin-page">
+
+
+    <div class="admin-card">
+
+
+        <!-- LOGO -->
+
+        <img
+            src="{{ url_for('static', filename='images/truescan-logo.png') }}"
+            class="admin-logo"
+            alt="TRUESCAN Logo">
+
+
+        <!-- ADMIN BADGE -->
+
+        <div class="admin-badge">
+
+            ADMIN ACCESS
+
+        </div>
+
+
+        <!-- TITLE -->
+
+        <h1>
+            Admin Login
+        </h1>
+
+
+        <p class="subtitle">
+
+            Sign in to access the TRUESCAN administration panel
+
+        </p>
+
+
+        <!-- ERROR -->
+
+        {% if error %}
+
+        <div class="error-message">
+
+            {{ error }}
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- FORM -->
+
+        <form
+            method="POST"
+            action="{{ url_for('admin_login') }}">
+
+
+            <!-- EMAIL -->
+
+            <label>
+                Admin Email Address
+            </label>
+
+
+            <div class="input-box">
+
+                <span class="input-icon">
+                    ✉
+                </span>
+
+
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Enter admin email"
+                    required>
+
+            </div>
+
+
+            <!-- PASSWORD -->
+
+            <label>
+                Admin Password
+            </label>
+
+
+            <div class="input-box">
+
+                <span class="input-icon">
+                    🔒
+                </span>
+
+
+                <input
+                    type="password"
+                    id="admin-password"
+                    name="password"
+                    placeholder="Enter admin password"
+                    required>
+
+
+                <button
+                    type="button"
+                    class="show-btn"
+                    onclick="togglePassword()">
+
+                    👁
+
+                </button>
+
+            </div>
+
+
+            <!-- LOGIN -->
+
+            <button
+                type="submit"
+                class="admin-login-btn">
+
+                LOGIN AS ADMIN
+
+            </button>
+
+
+        </form>
+
+
+        <!-- BACK -->
+
+        <div class="back-login">
+
+            <a href="{{ url_for('login') }}">
+
+                ← Back to User Login
+
+            </a>
+
+        </div>
+
+
+        <!-- SECURITY -->
+
+        <div class="security-box">
+
+            <span>
+                🛡
+            </span>
+
+
+            <div>
+
+                <strong>
+                    Secure Admin Access
+                </strong>
+
+
+                <p>
+                    Authorized administrators only
+                </p>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+function togglePassword() {
+
+    const password =
+        document.getElementById(
+            "admin-password"
+        );
+
+
+    if (password.type === "password") {
+
+        password.type = "text";
+
+    }
+
+    else {
+
+        password.type = "password";
+
+    }
+
+}
+
+</script>
+
+
+</body>
+
+</html>

@@ -2,252 +2,396 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>TRUESCAN - Scan Result</title>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>TRUESCAN - Security Result</title>
 
     <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/result.css') }}">
+          href="{{ url_for(
+              'static',
+              filename='css/scan_result.css'
+          ) }}">
+
 </head>
+
 
 <body>
 
-<div class="result-page">
 
-    <!-- HEADER -->
-    <header class="result-header">
+<!-- =====================================================
+     HEADER
+===================================================== -->
 
-        <a href="{{ url_for('dashboard') }}"
-           class="back-btn">
-            ←
-        </a>
+<header class="top-header">
 
-        <div class="brand-area">
+    <div class="brand">
 
-            <img src="{{ url_for('static',
-                    filename='images/truescan-logo.png') }}"
-                 alt="TRUESCAN">
+        <img src="{{ url_for(
+            'static',
+            filename='images/truescan-logo.png'
+        ) }}"
+        alt="TRUESCAN">
 
-            <div>
-                <h2>TRUESCAN</h2>
-                <p>SCAN • DETECT • PROTECT</p>
+        <span>TRUESCAN</span>
+
+    </div>
+
+
+    <a href="{{ url_for('dashboard') }}"
+       class="dashboard-btn">
+
+        Dashboard
+
+    </a>
+
+</header>
+
+
+
+<!-- =====================================================
+     MAIN RESULT
+===================================================== -->
+
+<main class="result-container">
+
+<div class="result-card">
+
+
+    <!-- TITLE -->
+
+    <div class="title-section">
+
+        <div class="shield-icon">
+            🛡️
+        </div>
+
+        <div>
+
+            <h1>
+                Security Result
+            </h1>
+
+            <p>
+                Your scan has been analyzed.
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =================================================
+         RISK STATUS
+    ================================================= -->
+
+    {% set level = status|lower %}
+
+    <div class="risk-status
+
+        {% if 'dangerous' in level or 'high' in level %}
+            high
+        {% elif 'suspicious' in level or 'medium' in level %}
+            medium
+        {% else %}
+            low
+        {% endif %}
+
+    ">
+
+
+        <div class="status-icon">
+
+            {% if 'dangerous' in level or 'high' in level %}
+                ⚠
+            {% elif 'suspicious' in level or 'medium' in level %}
+                !
+            {% else %}
+                ✓
+            {% endif %}
+
+        </div>
+
+
+        <div class="status-content">
+
+            <span class="status-label">
+                Security Status
+            </span>
+
+            <strong>
+                {{ status }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =================================================
+         RISK SCORE
+    ================================================= -->
+
+    <div class="score-section">
+
+        <div class="score-header">
+
+            <span>
+                Risk Score
+            </span>
+
+            <strong>
+                {{ score }}/100
+            </strong>
+
+        </div>
+
+
+        <div class="progress-background">
+
+            <div
+                class="progress-bar
+
+                {% if score >= 60 %}
+                    progress-high
+                {% elif score >= 30 %}
+                    progress-medium
+                {% else %}
+                    progress-low
+                {% endif %}"
+
+                style="width: {{ score }}%;">
             </div>
 
         </div>
 
-        <div class="online">
-            <span></span>
-            Online
+
+        <div class="score-labels">
+
+            <span>Safe</span>
+
+            <span>Suspicious</span>
+
+            <span>Dangerous</span>
+
         </div>
 
-    </header>
+    </div>
 
 
-    <!-- MAIN -->
-    <main class="result-main">
 
-        <div class="result-card">
+    <!-- =================================================
+         QR TYPE
+    ================================================= -->
+
+    <div class="info-box">
+
+        <div class="info-icon">
+            ◈
+        </div>
+
+        <div class="info-content">
+
+            <span class="info-label">
+                QR / Content Type
+            </span>
+
+            <strong>
+                {{ qr_type }}
+            </strong>
+
+        </div>
+
+    </div>
 
 
-            <!-- TITLE -->
-            <div class="result-title">
 
-                <div class="result-icon">
-                    🔍
-                </div>
+    <!-- =================================================
+         SCANNED CONTENT
+    ================================================= -->
 
-                <div>
-                    <h1>Security Analysis</h1>
-                    <p>TRUESCAN scan result</p>
-                </div>
+    <div class="content-section">
 
-            </div>
+        <div class="section-title">
+            Scanned Content
+        </div>
 
 
-            <!-- STATUS -->
-            <div class="status-card
-                {% if status == 'Dangerous' %}
-                    dangerous
-                {% elif status == 'Suspicious' %}
-                    suspicious
+        <div class="content-box">
+
+            {{ result }}
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =================================================
+         SECURITY ANALYSIS
+    ================================================= -->
+
+    <div class="analysis-section">
+
+        <div class="section-title">
+            Security Analysis
+        </div>
+
+
+        <div class="analysis-box">
+
+            <div class="analysis-icon">
+
+                {% if score >= 60 %}
+                    ⚠️
+                {% elif score >= 30 %}
+                    ⚡
                 {% else %}
-                    safe
-                {% endif %}">
-
-                <div class="status-symbol">
-
-                    {% if status == 'Dangerous' %}
-                        ⚠️
-                    {% elif status == 'Suspicious' %}
-                        ⚠️
-                    {% else %}
-                        ✓
-                    {% endif %}
-
-                </div>
-
-                <div>
-
-                    <p class="status-label">
-                        SECURITY STATUS
-                    </p>
-
-                    <h2>
-                        {{ status }}
-                    </h2>
-
-                    <p>
-                        {% if status == 'Dangerous' %}
-                            This link may contain scam indicators.
-                        {% elif status == 'Suspicious' %}
-                            This link contains some suspicious indicators.
-                        {% else %}
-                            No major suspicious indicators were detected.
-                        {% endif %}
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <!-- RISK SCORE -->
-            <div class="risk-section">
-
-                <div class="risk-header">
-
-                    <span>
-                        Risk Score
-                    </span>
-
-                    <strong>
-                        {{ score }}/100
-                    </strong>
-
-                </div>
-
-                <div class="risk-bar">
-
-                    <div class="risk-fill
-                        {% if status == 'Dangerous' %}
-                            danger-fill
-                        {% elif status == 'Suspicious' %}
-                            warning-fill
-                        {% else %}
-                            safe-fill
-                        {% endif %}"
-                        style="width: {{ score }}%;">
-                    </div>
-
-                </div>
-
-                <p class="risk-note">
-                    Higher score means higher security risk.
-                </p>
-
-            </div>
-
-
-            <!-- DETECTED DATA -->
-            <div class="detected-data">
-
-                <h3>
-                    Detected Data
-                </h3>
-
-                <div class="data-box">
-
-                    <span class="data-icon">
-                        🔗
-                    </span>
-
-                    <p>
-                        {{ result }}
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <!-- RECOMMENDATIONS -->
-            <div class="recommendations">
-
-                <h3>
-                    🛡️ Security Recommendations
-                </h3>
-
-                {% if status == 'Dangerous' %}
-
-                <div class="recommendation danger">
-                    <span>⚠️</span>
-                    <p>Do not open this link.</p>
-                </div>
-
-                <div class="recommendation danger">
-                    <span>🔐</span>
-                    <p>Do not enter your password or OTP.</p>
-                </div>
-
-                <div class="recommendation danger">
-                    <span>💳</span>
-                    <p>Do not share banking or payment details.</p>
-                </div>
-
-                {% elif status == 'Suspicious' %}
-
-                <div class="recommendation warning">
-                    <span>⚠️</span>
-                    <p>Be careful before opening this link.</p>
-                </div>
-
-                <div class="recommendation warning">
-                    <span>🔍</span>
-                    <p>Verify the website address carefully.</p>
-                </div>
-
-                {% else %}
-
-                <div class="recommendation safe">
-                    <span>✓</span>
-                    <p>No major suspicious indicators detected.</p>
-                </div>
-
+                    ✓
                 {% endif %}
 
             </div>
 
 
-            <!-- BUTTONS -->
-            <div class="result-actions">
+            <div>
 
-                <a href="{{ url_for('dashboard') }}"
-                   class="dashboard-btn">
-                    ← Back to Dashboard
-                </a>
+                {% if reasons %}
 
-                <a href="{{ url_for('history') }}"
-                   class="history-btn">
-                    📋 View Scan History
-                </a>
+                    {% for reason in reasons %}
+
+                        <p>
+                            {{ reason }}
+                        </p>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <p>
+                        No common suspicious indicators
+                        were detected.
+                    </p>
+
+                {% endif %}
 
             </div>
 
         </div>
 
-    </main>
+    </div>
 
 
-    <!-- FOOTER -->
-    <footer>
 
-        <p>© 2026 TRUESCAN</p>
-        <span>Your Digital Safety Partner</span>
+    <!-- =================================================
+         ACTION BUTTONS
+    ================================================= -->
 
-    </footer>
+    <div class="action-buttons">
+
+
+        <a href="{{ url_for('qr_upload') }}"
+           class="primary-btn">
+
+            🖼️ Scan Another Image
+
+        </a>
+
+
+        <a href="{{ url_for('qr_camera') }}"
+           class="secondary-btn">
+
+            📷 QR Camera Scan
+
+        </a>
+
+
+        <a href="{{ url_for('link_checker') }}"
+           class="secondary-btn">
+
+            🔗 Check Another Link
+
+        </a>
+
+
+    </div>
+
+
+
+    <!-- HISTORY -->
+
+    <a href="{{ url_for('history') }}"
+       class="history-link">
+
+        View Scan History →
+
+    </a>
+
 
 </div>
 
+</main>
+
+
+
+<!-- =====================================================
+     BOTTOM NAVIGATION
+===================================================== -->
+
+<nav class="bottom-nav">
+
+
+    <a href="{{ url_for('dashboard') }}">
+
+        <span>⌂</span>
+
+        <small>
+            Home
+        </small>
+
+    </a>
+
+
+    <a href="{{ url_for('history') }}">
+
+        <span>◷</span>
+
+        <small>
+            History
+        </small>
+
+    </a>
+
+
+    <a href="{{ url_for('report') }}">
+
+        <span>⚑</span>
+
+        <small>
+            Report
+        </small>
+
+    </a>
+
+
+    <a href="{{ url_for('profile') }}">
+
+        <span>◉</span>
+
+        <small>
+            Profile
+        </small>
+
+    </a>
+
+
+</nav>
+
+
 </body>
+
 </html>
