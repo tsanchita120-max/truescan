@@ -2,221 +2,281 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>TRUESCAN - Admin Login</title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/admin_login.css') }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-family: Arial, Helvetica, sans-serif;
+
+            background:
+                radial-gradient(circle at top right, #123d68, #061323 45%, #020812);
+            
+            color: white;
+        }
+
+        .login-card {
+            width: 430px;
+            max-width: 92%;
+
+            padding: 42px 38px;
+
+            background: rgba(12, 27, 45, 0.96);
+
+            border: 1px solid rgba(42, 154, 255, 0.35);
+
+            border-radius: 22px;
+
+            box-shadow:
+                0 0 40px rgba(0, 132, 255, 0.15);
+
+            text-align: center;
+        }
+
+        .logo {
+            width: 85px;
+            height: 85px;
+            object-fit: contain;
+
+            margin-bottom: 18px;
+
+            filter: drop-shadow(0 0 15px rgba(0, 153, 255, 0.7));
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #91b6d8;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .admin-badge {
+            display: inline-block;
+
+            padding: 7px 16px;
+
+            margin-bottom: 24px;
+
+            border-radius: 20px;
+
+            background: rgba(0, 140, 255, 0.12);
+
+            border: 1px solid rgba(0, 174, 255, 0.3);
+
+            color: #4db8ff;
+
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .input-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+
+            margin-bottom: 8px;
+
+            font-size: 14px;
+            font-weight: bold;
+
+            color: #dcecff;
+        }
+
+        input {
+            width: 100%;
+
+            padding: 14px 15px;
+
+            border-radius: 10px;
+
+            border: 1px solid #294866;
+
+            background: #0b1c2f;
+
+            color: white;
+
+            outline: none;
+
+            font-size: 14px;
+        }
+
+        input:focus {
+            border-color: #168fff;
+
+            box-shadow:
+                0 0 0 3px rgba(22, 143, 255, 0.12);
+        }
+
+        input::placeholder {
+            color: #66809b;
+        }
+
+        .login-btn {
+            width: 100%;
+
+            padding: 15px;
+
+            margin-top: 8px;
+
+            border: none;
+
+            border-radius: 11px;
+
+            background:
+                linear-gradient(90deg, #286cff, #10b8d8);
+
+            color: white;
+
+            font-size: 15px;
+            font-weight: bold;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 8px 22px rgba(20, 132, 255, 0.25);
+        }
+
+        .login-btn:hover {
+            opacity: 0.92;
+        }
+
+        .error {
+            margin-bottom: 18px;
+
+            padding: 11px;
+
+            border-radius: 8px;
+
+            background: rgba(255, 60, 60, 0.10);
+
+            border: 1px solid rgba(255, 80, 80, 0.3);
+
+            color: #ff8c8c;
+
+            font-size: 13px;
+        }
+
+        .back-link {
+            display: block;
+
+            margin-top: 24px;
+
+            color: #4db8ff;
+
+            text-decoration: none;
+
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 500px) {
+
+            .login-card {
+                padding: 32px 24px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
 </head>
-
 
 <body>
 
-
-<div class="admin-page">
-
-
-    <div class="admin-card">
-
-
-        <!-- LOGO -->
+    <div class="login-card">
 
         <img
             src="{{ url_for('static', filename='images/truescan-logo.png') }}"
-            class="admin-logo"
-            alt="TRUESCAN Logo">
+            class="logo"
+            alt="TRUESCAN"
+        >
 
-
-        <!-- ADMIN BADGE -->
-
-        <div class="admin-badge">
-
-            ADMIN ACCESS
-
-        </div>
-
-
-        <!-- TITLE -->
-
-        <h1>
-            Admin Login
-        </h1>
-
+        <h1>Admin Login</h1>
 
         <p class="subtitle">
-
-            Sign in to access the TRUESCAN administration panel
-
+            Secure Administrator Access
         </p>
 
-
-        <!-- ERROR -->
-
-        {% if error %}
-
-        <div class="error-message">
-
-            {{ error }}
-
+        <div class="admin-badge">
+            ADMINISTRATOR
         </div>
 
+        {% if error %}
+            <div class="error">
+                {{ error }}
+            </div>
         {% endif %}
 
+        <form method="POST">
 
-        <!-- FORM -->
+            <div class="input-group">
 
-        <form
-            method="POST"
-            action="{{ url_for('admin_login') }}">
-
-
-            <!-- EMAIL -->
-
-            <label>
-                Admin Email Address
-            </label>
-
-
-            <div class="input-box">
-
-                <span class="input-icon">
-                    ✉
-                </span>
-
+                <label>Email Address</label>
 
                 <input
                     type="email"
                     name="email"
-                    placeholder="Enter admin email"
-                    required>
+                    placeholder="Enter administrator email"
+                    required
+                >
 
             </div>
 
+            <div class="input-group">
 
-            <!-- PASSWORD -->
-
-            <label>
-                Admin Password
-            </label>
-
-
-            <div class="input-box">
-
-                <span class="input-icon">
-                    🔒
-                </span>
-
+                <label>Password</label>
 
                 <input
                     type="password"
-                    id="admin-password"
                     name="password"
-                    placeholder="Enter admin password"
-                    required>
-
-
-                <button
-                    type="button"
-                    class="show-btn"
-                    onclick="togglePassword()">
-
-                    👁
-
-                </button>
+                    placeholder="Enter administrator password"
+                    required
+                >
 
             </div>
-
-
-            <!-- LOGIN -->
 
             <button
                 type="submit"
-                class="admin-login-btn">
-
-                LOGIN AS ADMIN
-
+                class="login-btn"
+            >
+                ADMIN LOGIN
             </button>
-
 
         </form>
 
-
-        <!-- BACK -->
-
-        <div class="back-login">
-
-            <a href="{{ url_for('login') }}">
-
-                ← Back to User Login
-
-            </a>
-
-        </div>
-
-
-        <!-- SECURITY -->
-
-        <div class="security-box">
-
-            <span>
-                🛡
-            </span>
-
-
-            <div>
-
-                <strong>
-                    Secure Admin Access
-                </strong>
-
-
-                <p>
-                    Authorized administrators only
-                </p>
-
-            </div>
-
-        </div>
-
+        <a
+            href="{{ url_for('login') }}"
+            class="back-link"
+        >
+            ← Back to User Login
+        </a>
 
     </div>
-
-
-</div>
-
-
-<script>
-
-function togglePassword() {
-
-    const password =
-        document.getElementById(
-            "admin-password"
-        );
-
-
-    if (password.type === "password") {
-
-        password.type = "text";
-
-    }
-
-    else {
-
-        password.type = "password";
-
-    }
-
-}
-
-</script>
-
 
 </body>
 

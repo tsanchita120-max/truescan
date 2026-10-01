@@ -1,8 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import sqlite3
 import os
-import requests
-import time
 from werkzeug.utils import secure_filename
 
 from modules.qr_scanner import decode_qr, detect_qr_type
@@ -10,26 +8,25 @@ from modules.url_verification import verify_url
 from modules.risk_analyzer import analyze_risk
 
 
-# =========================================================
-# APP CONFIGURATION
-# =========================================================
-
 app = Flask(__name__)
 
-app.secret_key = "truescan_secret_key"
+app.secret_key = "truescan_secure_secret_key_2026"
 
 DATABASE = os.path.join(
     app.root_path,
     "truescan.db"
 )
 
-VIRUSTOTAL_API_KEY = os.environ.get(
-    "VIRUSTOTAL_API_KEY"
+UPLOAD_FOLDER = os.path.join(
+    app.root_path,
+    "uploads",
+    "qr_images"
 )
 
-VT_HEADERS = {
-    "x-apikey": VIRUSTOTAL_API_KEY
-} if VIRUSTOTAL_API_KEY else {}
+os.makedirs(
+    UPLOAD_FOLDER,
+    exist_ok=True
+)
 
 
 # =========================================================
@@ -38,7 +35,9 @@ VT_HEADERS = {
 
 def get_db():
 
-    conn = sqlite3.connect(DATABASE)
+    conn = sqlite3.connect(
+        DATABASE
+    )
 
     conn.row_factory = sqlite3.Row
 
@@ -49,18 +48,18 @@ def init_db():
 
     conn = get_db()
 
-    # USERS
     conn.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            email TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL,
-            role TEXT DEFAULT 'User'
+            name TEXT,
+            email TEXT UNIQUE,
+            password TEXT,
+            mobile TEXT,
+            role TEXT DEFAULT 'User',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
 
-    # HISTORY
     conn.execute("""
         CREATE TABLE IF NOT EXISTS history (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -73,10 +72,10 @@ def init_db():
         )
     """)
 
-    # REPORTS
     conn.execute("""
         CREATE TABLE IF NOT EXISTS reports (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT,
             category TEXT,
             url TEXT,
             message TEXT,
@@ -84,13 +83,9 @@ def init_db():
         )
     """)
 
-    # DEFAULT ADMIN
+    # Default administrator
     admin = conn.execute(
-        """
-        SELECT *
-        FROM users
-        WHERE email=?
-        """,
+        "SELECT * FROM users WHERE email = ?",
         ("admin@truscan.com",)
     ).fetchone()
 
@@ -98,444 +93,88 @@ def init_db():
 
         conn.execute("""
             INSERT INTO users
-            (name, email, password, role)
-            VALUES (?, ?, ?, ?)
+            (name, email, password, mobile, role)
+            VALUES (?, ?, ?, ?, ?)
         """, (
             "Administrator",
             "admin@truscan.com",
             "1234",
+            "",
             "Administrator"
         ))
 
     conn.commit()
-
     conn.close()
 
 
 # =========================================================
-# VIRUSTOTAL
+# DATABASE MIGRATION
 # =========================================================
 
-def check_virustotal(url):
+def ensure_database_columns():
 
-    if not VIRUSTOTAL_API_KEY:
+    conn = get_db()
 
-        return {
-            "available": False,
-            "malicious": 0,
-            "suspicious": 0,
-            "harmless": 0,
-            "undetected": 0,
-            "message": "VirusTotal API key is not loaded."
-        }
+    columns = conn.execute(
+        "PRAGMA table_info(users)"
+    ).fetchall()
 
-    try:
+    existing_columns = [
+        column["name"]
+        for column in columns
+    ]
 
-        # Submit URL to VirusTotal
-        response = requests.post(
-            "https://www.virustotal.com/api/v3/urls",
-            headers=VT_HEADERS,
-            data={
-                "url": url
-            },
-            timeout=20
+    if "mobile" not in existing_columns:
+
+        conn.execute(
+            "ALTER TABLE users ADD COLUMN mobile TEXT"
         )
 
-        if response.status_code not in (200, 201):
+    if "role" not in existing_columns:
 
-            print(
-                "VirusTotal submit error:",
-                response.status_code,
-                response.text[:300]
-            )
-
-            return {
-                "available": False,
-                "malicious": 0,
-                "suspicious": 0,
-                "harmless": 0,
-                "undetected": 0,
-                "message": "VirusTotal URL submission failed."
-            }
-
-        data = response.json()
-
-        analysis_id = data.get(
-            "data",
-            {}
-        ).get(
-            "id"
+        conn.execute(
+            "ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'User'"
         )
 
-        if not analysis_id:
-
-            return {
-                "available": False,
-                "malicious": 0,
-                "suspicious": 0,
-                "harmless": 0,
-                "undetected": 0,
-                "message": "VirusTotal analysis ID was not received."
-            }
-
-        # Wait for analysis
-        analysis_url = (
-            "https://www.virustotal.com/api/v3/analyses/"
-            + analysis_id
-        )
-
-        analysis_data = None
-
-        for _ in range(5):
-
-            time.sleep(2)
-
-            result_response = requests.get(
-                analysis_url,
-                headers=VT_HEADERS,
-                timeout=20
-            )
-
-            if result_response.status_code != 200:
-
-                continue
-
-            analysis_data = result_response.json()
-
-            status = (
-                analysis_data
-                .get("data", {})
-                .get("attributes", {})
-                .get("status")
-            )
-
-            if status == "completed":
-
-                break
-
-        if not analysis_data:
-
-            return {
-                "available": False,
-                "malicious": 0,
-                "suspicious": 0,
-                "harmless": 0,
-                "undetected": 0,
-                "message": "VirusTotal analysis result unavailable."
-            }
-
-        attributes = (
-            analysis_data
-            .get("data", {})
-            .get("attributes", {})
-        )
-
-        stats = attributes.get(
-            "stats",
-            {}
-        )
-
-        malicious = int(
-            stats.get("malicious", 0)
-        )
-
-        suspicious = int(
-            stats.get("suspicious", 0)
-        )
-
-        harmless = int(
-            stats.get("harmless", 0)
-        )
-
-        undetected = int(
-            stats.get("undetected", 0)
-        )
-
-        return {
-            "available": True,
-            "malicious": malicious,
-            "suspicious": suspicious,
-            "harmless": harmless,
-            "undetected": undetected,
-            "message": "VirusTotal analysis completed."
-        }
-
-    except requests.RequestException as e:
-
-        print(
-            "VirusTotal connection error:",
-            e
-        )
-
-        return {
-            "available": False,
-            "malicious": 0,
-            "suspicious": 0,
-            "harmless": 0,
-            "undetected": 0,
-            "message": "VirusTotal could not be reached."
-        }
-
-    except Exception as e:
-
-        print(
-            "VirusTotal error:",
-            e
-        )
-
-        return {
-            "available": False,
-            "malicious": 0,
-            "suspicious": 0,
-            "harmless": 0,
-            "undetected": 0,
-            "message": "VirusTotal analysis failed."
-        }
+    conn.commit()
+    conn.close()
 
 
 # =========================================================
-# COMBINE LOCAL + VIRUSTOTAL ANALYSIS
+# LOGIN HELPERS
 # =========================================================
 
-def perform_security_analysis(content):
+def user_logged_in():
 
-    try:
+    return "email" in session
 
-        # Local URL verification
-        url_result = verify_url(
-            content
-        )
 
-    except Exception as e:
+def admin_logged_in():
 
-        print(
-            "URL VERIFICATION ERROR:",
-            e
-        )
-
-        url_result = {}
-
-    try:
-
-        # Existing local risk analyzer
-        risk_result = analyze_risk(
-            url_result
-        )
-
-    except Exception as e:
-
-        print(
-            "RISK ANALYZER ERROR:",
-            e
-        )
-
-        risk_result = {
-            "score": 0,
-            "status": "Information",
-            "reasons": []
-        }
-
-    try:
-
-        local_score = int(
-            risk_result.get(
-                "score",
-                0
-            )
-        )
-
-    except:
-
-        local_score = 0
-
-    local_status = risk_result.get(
-        "status",
-        "Information"
+    return (
+        session.get("email") == "admin@truscan.com"
+        and session.get("role") == "Administrator"
     )
 
-    reasons = risk_result.get(
-        "reasons",
-        []
-    )
-
-    if not isinstance(reasons, list):
-
-        reasons = [
-            str(reasons)
-        ]
-
-    # -----------------------------------------------------
-    # VirusTotal only for HTTP/HTTPS URLs
-    # -----------------------------------------------------
-
-    is_url = (
-        content.lower().startswith("http://")
-        or
-        content.lower().startswith("https://")
-    )
-
-    vt_result = {
-        "available": False,
-        "malicious": 0,
-        "suspicious": 0,
-        "harmless": 0,
-        "undetected": 0,
-        "message": "VirusTotal check not required."
-    }
-
-    if is_url:
-
-        vt_result = check_virustotal(
-            content
-        )
-
-    # -----------------------------------------------------
-    # Combine Results
-    # -----------------------------------------------------
-
-    final_score = local_score
-
-    if vt_result["available"]:
-
-        malicious = vt_result["malicious"]
-
-        suspicious = vt_result["suspicious"]
-
-        # Increase score according to VT findings
-        if malicious > 0:
-
-            final_score = max(
-                final_score,
-                min(
-                    100,
-                    70 + malicious * 5
-                )
-            )
-
-            reasons.append(
-                f"VirusTotal detected "
-                f"{malicious} malicious security engine result(s)."
-            )
-
-        elif suspicious > 0:
-
-            final_score = max(
-                final_score,
-                min(
-                    100,
-                    40 + suspicious * 5
-                )
-            )
-
-            reasons.append(
-                f"VirusTotal reported "
-                f"{suspicious} suspicious security engine result(s)."
-            )
-
-        else:
-
-            reasons.append(
-                "VirusTotal did not report malicious detections."
-            )
-
-    # Keep score between 0 and 100
-    final_score = max(
-        0,
-        min(
-            100,
-            int(final_score)
-        )
-    )
-
-    # -----------------------------------------------------
-    # Final Status
-    # -----------------------------------------------------
-
-    if final_score >= 70:
-
-        final_status = "High Risk"
-
-    elif final_score >= 40:
-
-        final_status = "Medium Risk"
-
-    else:
-
-        final_status = "Low Risk"
-
-    if not reasons:
-
-        if final_status == "High Risk":
-
-            reasons.append(
-                "The submitted content shows high-risk indicators."
-            )
-
-        elif final_status == "Medium Risk":
-
-            reasons.append(
-                "The submitted content contains suspicious indicators."
-            )
-
-        else:
-
-            reasons.append(
-                "No major security risk was detected."
-            )
-
-    return {
-        "score": final_score,
-        "status": final_status,
-        "reasons": reasons,
-        "virustotal": vt_result
-    }
-
 
 # =========================================================
-# SAVE HISTORY
-# =========================================================
-
-def save_history(
-    scan_type,
-    value,
-    result,
-    score
-):
-
-    try:
-
-        conn = get_db()
-
-        conn.execute("""
-            INSERT INTO history
-            (user_email, scan_type, value, result, score)
-            VALUES (?, ?, ?, ?, ?)
-        """, (
-            session.get("email"),
-            scan_type,
-            value,
-            result,
-            score
-        ))
-
-        conn.commit()
-
-        conn.close()
-
-    except Exception as e:
-
-        print(
-            "HISTORY ERROR:",
-            e
-        )
-
-
-# =========================================================
-# SPLASH
+# HOME
 # =========================================================
 
 @app.route("/")
-def splash():
+def index():
+
+    if user_logged_in():
+
+        if admin_logged_in():
+
+            return redirect(
+                url_for("admin")
+            )
+
+        return redirect(
+            url_for("dashboard")
+        )
 
     return render_template(
         "splash.html"
@@ -543,7 +182,7 @@ def splash():
 
 
 # =========================================================
-# NORMAL LOGIN
+# USER LOGIN
 # =========================================================
 
 @app.route(
@@ -562,15 +201,15 @@ def login():
         password = request.form.get(
             "password",
             ""
-        )
+        ).strip()
 
         conn = get_db()
 
         user = conn.execute("""
             SELECT *
             FROM users
-            WHERE email=?
-            AND password=?
+            WHERE email = ?
+            AND password = ?
         """, (
             email,
             password
@@ -581,9 +220,7 @@ def login():
         if user:
 
             session["email"] = user["email"]
-
             session["name"] = user["name"]
-
             session["role"] = user["role"]
 
             if user["role"] == "Administrator":
@@ -598,7 +235,7 @@ def login():
 
         return render_template(
             "login.html",
-            error="Invalid email or password"
+            error="Invalid email or password."
         )
 
     return render_template(
@@ -626,16 +263,16 @@ def admin_login():
         password = request.form.get(
             "password",
             ""
-        )
+        ).strip()
 
         conn = get_db()
 
-        admin_user = conn.execute("""
+        admin = conn.execute("""
             SELECT *
             FROM users
-            WHERE email=?
-            AND password=?
-            AND role='Administrator'
+            WHERE email = ?
+            AND password = ?
+            AND role = 'Administrator'
         """, (
             email,
             password
@@ -643,25 +280,23 @@ def admin_login():
 
         conn.close()
 
-        if admin_user:
+        if admin:
 
-            session["email"] = admin_user["email"]
-
-            session["name"] = admin_user["name"]
-
-            session["role"] = "Administrator"
+            session["email"] = admin["email"]
+            session["name"] = admin["name"]
+            session["role"] = admin["role"]
 
             return redirect(
                 url_for("admin")
             )
 
         return render_template(
-            "login.html",
-            error="Invalid administrator credentials"
+            "admin_login.html",
+            error="Invalid administrator credentials."
         )
 
     return render_template(
-        "login.html"
+        "admin_login.html"
     )
 
 
@@ -690,67 +325,54 @@ def register():
         password = request.form.get(
             "password",
             ""
-        )
+        ).strip()
 
-        confirm_password = request.form.get(
-            "confirm_password",
-            request.form.get(
-                "confirm",
-                ""
-            )
-        )
+        mobile = request.form.get(
+            "mobile",
+            ""
+        ).strip()
 
-        if not name:
-
-            name = (
-                email.split("@")[0]
-                if email
-                else "User"
-            )
-
-        if not email or not password:
+        if not name or not email or not password:
 
             return render_template(
                 "register.html",
-                message="Please fill all required fields"
+                error="Please fill all required fields."
             )
 
-        if password != confirm_password:
+        conn = get_db()
 
-            return render_template(
-                "register.html",
-                message="Passwords do not match"
-            )
+        existing = conn.execute(
+            "SELECT * FROM users WHERE email = ?",
+            (email,)
+        ).fetchone()
 
-        try:
-
-            conn = get_db()
-
-            conn.execute("""
-                INSERT INTO users
-                (name, email, password, role)
-                VALUES (?, ?, ?, ?)
-            """, (
-                name,
-                email,
-                password,
-                "User"
-            ))
-
-            conn.commit()
+        if existing:
 
             conn.close()
 
-            return redirect(
-                url_for("login")
-            )
-
-        except sqlite3.IntegrityError:
-
             return render_template(
                 "register.html",
-                message="Email already registered"
+                error="An account with this email already exists."
             )
+
+        conn.execute("""
+            INSERT INTO users
+            (name, email, password, mobile, role)
+            VALUES (?, ?, ?, ?, ?)
+        """, (
+            name,
+            email,
+            password,
+            mobile,
+            "User"
+        ))
+
+        conn.commit()
+        conn.close()
+
+        return redirect(
+            url_for("login")
+        )
 
     return render_template(
         "register.html"
@@ -764,33 +386,40 @@ def register():
 @app.route("/dashboard")
 def dashboard():
 
-    if "email" not in session:
+    if not user_logged_in():
 
         return redirect(
             url_for("login")
         )
 
+    conn = get_db()
+
+    recent_scans = conn.execute("""
+        SELECT *
+        FROM history
+        WHERE user_email = ?
+        ORDER BY id DESC
+        LIMIT 5
+    """, (
+        session["email"],
+    )).fetchall()
+
+    conn.close()
+
     return render_template(
         "dashboard.html",
-        name=session.get(
-            "name",
-            "User"
-        ),
-        email=session.get(
-            "email",
-            ""
-        )
+        recent_scans=recent_scans
     )
 
 
 # =========================================================
-# QR CAMERA PAGE
+# QR CAMERA
 # =========================================================
 
 @app.route("/qr_camera")
 def qr_camera():
 
-    if "email" not in session:
+    if not user_logged_in():
 
         return redirect(
             url_for("login")
@@ -802,7 +431,7 @@ def qr_camera():
 
 
 # =========================================================
-# CAMERA QR ANALYSIS
+# QR CAMERA ANALYSIS
 # =========================================================
 
 @app.route(
@@ -811,7 +440,7 @@ def qr_camera():
 )
 def analyze_qr():
 
-    if "email" not in session:
+    if not user_logged_in():
 
         return redirect(
             url_for("login")
@@ -819,7 +448,6 @@ def analyze_qr():
 
     decoded_text = ""
 
-    # FORM DATA
     if request.form:
 
         decoded_text = request.form.get(
@@ -827,7 +455,6 @@ def analyze_qr():
             ""
         ).strip()
 
-    # JSON DATA
     if not decoded_text and request.is_json:
 
         data = request.get_json(
@@ -853,45 +480,54 @@ def analyze_qr():
             status="Information",
             reasons=[
                 "The QR code could not be analyzed."
-            ],
-            virustotal={
-                "available": False
-            }
+            ]
         )
 
     try:
 
-        # Detect QR type
-        try:
-
-            qr_type = detect_qr_type(
-                decoded_text
-            )
-
-        except:
-
-            qr_type = "Unknown"
-
-        # Security analysis
-        analysis = perform_security_analysis(
+        qr_type = detect_qr_type(
             decoded_text
         )
 
-        score = analysis["score"]
+        url_result = verify_url(
+            decoded_text
+        )
 
-        status = analysis["status"]
+        risk_result = analyze_risk(
+            url_result
+        )
 
-        reasons = analysis["reasons"]
+        score = risk_result.get(
+            "score",
+            0
+        )
 
-        vt_result = analysis["virustotal"]
+        status = risk_result.get(
+            "status",
+            "Information"
+        )
 
-        # Save
-        save_history(
+        reasons = risk_result.get(
+            "reasons",
+            []
+        )
+
+        conn = get_db()
+
+        conn.execute("""
+            INSERT INTO history
+            (user_email, scan_type, value, result, score)
+            VALUES (?, ?, ?, ?, ?)
+        """, (
+            session["email"],
             "QR Camera",
             decoded_text,
             status,
             score
-        )
+        ))
+
+        conn.commit()
+        conn.close()
 
         return render_template(
             "result.html",
@@ -899,8 +535,7 @@ def analyze_qr():
             qr_type=qr_type,
             score=score,
             status=status,
-            reasons=reasons,
-            virustotal=vt_result
+            reasons=reasons
         )
 
     except Exception as e:
@@ -918,10 +553,7 @@ def analyze_qr():
             status="Unable to Analyze",
             reasons=[
                 "An error occurred while analyzing the QR code."
-            ],
-            virustotal={
-                "available": False
-            }
+            ]
         )
 
 
@@ -935,7 +567,7 @@ def analyze_qr():
 )
 def qr_upload():
 
-    if "email" not in session:
+    if not user_logged_in():
 
         return redirect(
             url_for("login")
@@ -958,35 +590,17 @@ def qr_upload():
 
             return render_template(
                 "qr_upload.html",
-                error="Please select a valid QR image."
+                error="Please select a valid image."
             )
 
         try:
-
-            upload_folder = os.path.join(
-                app.root_path,
-                "uploads",
-                "qr_images"
-            )
-
-            os.makedirs(
-                upload_folder,
-                exist_ok=True
-            )
 
             filename = secure_filename(
                 qr_image.filename
             )
 
-            if not filename:
-
-                return render_template(
-                    "qr_upload.html",
-                    error="Invalid image filename."
-                )
-
             file_path = os.path.join(
-                upload_folder,
+                UPLOAD_FOLDER,
                 filename
             )
 
@@ -994,61 +608,51 @@ def qr_upload():
                 file_path
             )
 
-            # REAL QR DECODING
             qr_result = decode_qr(
                 file_path
             )
 
-            if not qr_result.get(
-                "success",
-                False
-            ):
+            if not qr_result["success"]:
 
                 return render_template(
                     "qr_upload.html",
-                    error=qr_result.get(
-                        "message",
-                        "QR code could not be decoded."
-                    )
+                    error=qr_result["message"]
                 )
 
-            decoded_text = qr_result.get(
-                "data",
-                ""
-            )
+            decoded_text = qr_result["data"]
 
-            if not decoded_text:
+            qr_type = qr_result["type"]
 
-                return render_template(
-                    "qr_upload.html",
-                    error="No QR data was detected."
-                )
-
-            qr_type = qr_result.get(
-                "type",
-                "Unknown"
-            )
-
-            # Security analysis
-            analysis = perform_security_analysis(
+            url_result = verify_url(
                 decoded_text
             )
 
-            score = analysis["score"]
+            risk_result = analyze_risk(
+                url_result
+            )
 
-            status = analysis["status"]
+            score = risk_result["score"]
 
-            reasons = analysis["reasons"]
+            status = risk_result["status"]
 
-            vt_result = analysis["virustotal"]
+            reasons = risk_result["reasons"]
 
-            # Save history
-            save_history(
+            conn = get_db()
+
+            conn.execute("""
+                INSERT INTO history
+                (user_email, scan_type, value, result, score)
+                VALUES (?, ?, ?, ?, ?)
+            """, (
+                session["email"],
                 "QR Image",
                 decoded_text,
                 status,
                 score
-            )
+            ))
+
+            conn.commit()
+            conn.close()
 
             return render_template(
                 "result.html",
@@ -1056,8 +660,7 @@ def qr_upload():
                 qr_type=qr_type,
                 score=score,
                 status=status,
-                reasons=reasons,
-                virustotal=vt_result
+                reasons=reasons
             )
 
         except Exception as e:
@@ -1087,7 +690,7 @@ def qr_upload():
 )
 def link_checker():
 
-    if "email" not in session:
+    if not user_logged_in():
 
         return redirect(
             url_for("login")
@@ -1109,26 +712,36 @@ def link_checker():
 
         try:
 
-            # Security analysis
-            analysis = perform_security_analysis(
+            url_result = verify_url(
                 url
             )
 
-            score = analysis["score"]
+            risk_result = analyze_risk(
+                url_result
+            )
 
-            status = analysis["status"]
+            score = risk_result["score"]
 
-            reasons = analysis["reasons"]
+            status = risk_result["status"]
 
-            vt_result = analysis["virustotal"]
+            reasons = risk_result["reasons"]
 
-            # Save history
-            save_history(
+            conn = get_db()
+
+            conn.execute("""
+                INSERT INTO history
+                (user_email, scan_type, value, result, score)
+                VALUES (?, ?, ?, ?, ?)
+            """, (
+                session["email"],
                 "Link",
                 url,
                 status,
                 score
-            )
+            ))
+
+            conn.commit()
+            conn.close()
 
             return render_template(
                 "result.html",
@@ -1136,8 +749,7 @@ def link_checker():
                 qr_type="Website / URL",
                 score=score,
                 status=status,
-                reasons=reasons,
-                virustotal=vt_result
+                reasons=reasons
             )
 
         except Exception as e:
@@ -1164,7 +776,7 @@ def link_checker():
 @app.route("/history")
 def history():
 
-    if "email" not in session:
+    if not user_logged_in():
 
         return redirect(
             url_for("login")
@@ -1172,10 +784,10 @@ def history():
 
     conn = get_db()
 
-    records = conn.execute("""
+    scans = conn.execute("""
         SELECT *
         FROM history
-        WHERE user_email=?
+        WHERE user_email = ?
         ORDER BY id DESC
     """, (
         session["email"],
@@ -1185,7 +797,7 @@ def history():
 
     return render_template(
         "history.html",
-        records=records
+        scans=scans
     )
 
 
@@ -1196,7 +808,7 @@ def history():
 @app.route("/profile")
 def profile():
 
-    if "email" not in session:
+    if not user_logged_in():
 
         return redirect(
             url_for("login")
@@ -1204,16 +816,13 @@ def profile():
 
     conn = get_db()
 
-    user = conn.execute(
-        """
+    user = conn.execute("""
         SELECT *
         FROM users
-        WHERE email=?
-        """,
-        (
-            session["email"],
-        )
-    ).fetchone()
+        WHERE email = ?
+    """, (
+        session["email"],
+    )).fetchone()
 
     conn.close()
 
@@ -1233,7 +842,7 @@ def profile():
 )
 def report():
 
-    if "email" not in session:
+    if not user_logged_in():
 
         return redirect(
             url_for("login")
@@ -1244,37 +853,37 @@ def report():
         category = request.form.get(
             "category",
             ""
-        )
+        ).strip()
 
         url = request.form.get(
             "url",
             ""
-        )
+        ).strip()
 
         message = request.form.get(
             "message",
             ""
-        )
+        ).strip()
 
         conn = get_db()
 
         conn.execute("""
             INSERT INTO reports
-            (category, url, message)
-            VALUES (?, ?, ?)
+            (email, category, url, message)
+            VALUES (?, ?, ?, ?)
         """, (
+            session["email"],
             category,
             url,
             message
         ))
 
         conn.commit()
-
         conn.close()
 
         return render_template(
             "report.html",
-            success="Scam report submitted successfully!"
+            success="Report submitted successfully."
         )
 
     return render_template(
@@ -1289,18 +898,10 @@ def report():
 @app.route("/admin")
 def admin():
 
-    if "email" not in session:
+    if not admin_logged_in():
 
         return redirect(
-            url_for("login")
-        )
-
-    if session.get(
-        "role"
-    ) != "Administrator":
-
-        return redirect(
-            url_for("dashboard")
+            url_for("admin_login")
         )
 
     conn = get_db()
@@ -1311,29 +912,40 @@ def admin():
         ORDER BY id DESC
     """).fetchall()
 
+    scans = conn.execute("""
+        SELECT *
+        FROM history
+        ORDER BY id DESC
+    """).fetchall()
+
     reports = conn.execute("""
         SELECT *
         FROM reports
         ORDER BY id DESC
     """).fetchall()
 
-    total_users = conn.execute(
-        "SELECT COUNT(*) FROM users"
-    ).fetchone()[0]
+    total_users = conn.execute("""
+        SELECT COUNT(*) AS count
+        FROM users
+        WHERE role != 'Administrator'
+    """).fetchone()["count"]
 
-    total_scans = conn.execute(
-        "SELECT COUNT(*) FROM history"
-    ).fetchone()[0]
+    total_scans = conn.execute("""
+        SELECT COUNT(*) AS count
+        FROM history
+    """).fetchone()["count"]
 
-    total_reports = conn.execute(
-        "SELECT COUNT(*) FROM reports"
-    ).fetchone()[0]
+    total_reports = conn.execute("""
+        SELECT COUNT(*) AS count
+        FROM reports
+    """).fetchone()["count"]
 
     conn.close()
 
     return render_template(
         "admin.html",
         users=users,
+        scans=scans,
         reports=reports,
         total_users=total_users,
         total_scans=total_scans,
@@ -1363,23 +975,21 @@ if __name__ == "__main__":
 
     init_db()
 
-    print("")
-    print("===================================")
-    print("       TRUESCAN SERVER STARTED")
-    print("===================================")
-    print("VirusTotal API:",
-          "LOADED" if VIRUSTOTAL_API_KEY else "NOT LOADED")
-    print("Open: http://127.0.0.1:5000")
-    print("===================================")
-    print("")
+    ensure_database_columns()
 
-    app.run(
-        host="127.0.0.1",
-        port=int(
-            os.environ.get(
-                "PORT",
-                5000
-            )
-        ),
-        debug=True
-    )
+print("===================================")
+print("Open: http://127.0.0.1:5000")
+print("Open on network: http://192.168.0.103:5000")
+print("===================================")
+print("")
+
+app.run(
+    host="0.0.0.0",
+    port=int(
+        os.environ.get(
+            "PORT",
+            5000
+        )
+    ),
+    debug=True
+)
