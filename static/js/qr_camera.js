@@ -1,13 +1,41 @@
-let scannedValue = "";
 let scanner = null;
+let scannedValue = "";
 let scanCompleted = false;
+let cameraRunning = false;
 
 
-// =====================================================
-// QR SUCCESS
-// =====================================================
+/* =========================================================
+   ELEMENT HELPER
+========================================================= */
 
-function onScanSuccess(decodedText) {
+function getElement(id) {
+    return document.getElementById(id);
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+function setStatus(message, color) {
+
+    const status = getElement("scan-status");
+
+    if (status) {
+
+        status.textContent = message;
+
+        status.style.color =
+            color || "#91a5bc";
+    }
+}
+
+
+/* =========================================================
+   QR DETECTED
+========================================================= */
+
+function onScanSuccess(decodedText, decodedResult) {
 
     if (scanCompleted) {
         return;
@@ -17,22 +45,39 @@ function onScanSuccess(decodedText) {
         return;
     }
 
-    scannedValue = decodedText.trim();
+    decodedText = decodedText.trim();
+
+    if (!decodedText) {
+        return;
+    }
+
+
+    /* -----------------------------------------------
+       SAVE QR DATA
+    ----------------------------------------------- */
+
+    scannedValue = decodedText;
+
     scanCompleted = true;
 
-    console.log("QR DETECTED:", scannedValue);
+
+    console.log("--------------------------------");
+    console.log("TRUESCAN QR DETECTED");
+    console.log("QR DATA:", scannedValue);
+    console.log("--------------------------------");
+
+
+    /* -----------------------------------------------
+       SHOW RESULT BOX
+    ----------------------------------------------- */
 
     const resultBox =
-        document.getElementById("result-box");
+        getElement("result-box");
 
     const qrResult =
-        document.getElementById("qr-result");
-
-    const status =
-        document.getElementById("scan-status");
+        getElement("qr-result");
 
 
-    // Show detected QR
     if (qrResult) {
 
         qrResult.textContent =
@@ -40,7 +85,6 @@ function onScanSuccess(decodedText) {
     }
 
 
-    // Show result box
     if (resultBox) {
 
         resultBox.style.display =
@@ -48,199 +92,407 @@ function onScanSuccess(decodedText) {
     }
 
 
-    // Update status
-    if (status) {
+    /* -----------------------------------------------
+       ENABLE ANALYZE BUTTON
+    ----------------------------------------------- */
 
-        status.innerHTML =
-            '<span class="status-circle"></span> QR Code detected successfully!';
+    const analyzeButton =
+        document.querySelector(".analyze-btn");
 
-        status.style.color =
-            "#29d889";
+
+    if (analyzeButton) {
+
+        analyzeButton.disabled =
+            false;
+
+        analyzeButton.textContent =
+            "🔍 Analyze QR Code";
     }
 
 
-    // Stop camera
+    /* -----------------------------------------------
+       STATUS
+    ----------------------------------------------- */
+
+    setStatus(
+        "QR Code detected successfully. Click Analyze QR Code.",
+        "#29d889"
+    );
+
+
+    /* -----------------------------------------------
+       STOP CAMERA
+    ----------------------------------------------- */
+
     stopCamera();
 
-
-    // Send to Python
-    setTimeout(function () {
-
-        sendToPython();
-
-    }, 400);
 }
 
 
-// =====================================================
-// QR FAILURE
-// =====================================================
+/* =========================================================
+   SCAN FAILURE
+========================================================= */
 
 function onScanFailure(error) {
 
-    // Continuous scanner errors are ignored.
+    /*
+       html5-qrcode calls this repeatedly when
+       there is no QR code in the current frame.
+
+       Do not show an error for every frame.
+    */
+
+    if (!scanCompleted) {
+
+        setStatus(
+            "Scanning... Keep the QR code inside the scan area.",
+            "#55b7ff"
+        );
+    }
 }
 
 
-// =====================================================
-// START CAMERA
-// =====================================================
+/* =========================================================
+   START CAMERA
+========================================================= */
 
-function startCamera() {
+async function startCamera() {
 
-    if (typeof Html5Qrcode === "undefined") {
-
-        const status =
-            document.getElementById(
-                "scan-status"
-            );
-
-        if (status) {
-
-            status.textContent =
-                "Camera scanner library could not load.";
-        }
-
-        return;
-    }
+    console.log("--------------------------------");
+    console.log("TRUESCAN CAMERA STARTING");
+    console.log("--------------------------------");
 
 
     const reader =
-        document.getElementById("reader");
+        getElement("reader");
 
 
     if (!reader) {
 
         console.error(
-            "QR reader element not found."
+            "ERROR: #reader element not found."
+        );
+
+        setStatus(
+            "Scanner area not found.",
+            "#ff6b6b"
         );
 
         return;
     }
 
 
-    scanner =
-        new Html5Qrcode("reader");
+    /* -----------------------------------------------
+       CHECK LIBRARY
+    ----------------------------------------------- */
+
+    if (typeof Html5Qrcode === "undefined") {
+
+        console.error(
+            "ERROR: Html5Qrcode library is not loaded."
+        );
+
+        setStatus(
+            "QR scanner library could not load.",
+            "#ff6b6b"
+        );
+
+        return;
+    }
 
 
-    const config = {
-
-        fps: 10,
-
-        qrbox: {
-            width: 250,
-            height: 250
-        },
-
-        aspectRatio: 1.0
-    };
+    if (scanner) {
+        return;
+    }
 
 
-    scanner.start(
+    setStatus(
+        "Starting camera...",
+        "#55b7ff"
+    );
 
-        {
-            facingMode: "environment"
-        },
 
-        config,
+    try {
 
-        onScanSuccess,
+        scanner =
+            new Html5Qrcode("reader");
 
-        onScanFailure
 
-    )
+        /* -------------------------------------------
+           RESPONSIVE QR BOX
+        ------------------------------------------- */
 
-    .then(function () {
+        const config = {
 
-        console.log(
-            "Camera started successfully."
+            fps: 15,
+
+            qrbox: function (
+                viewfinderWidth,
+                viewfinderHeight
+            ) {
+
+                const size =
+                    Math.floor(
+                        Math.min(
+                            viewfinderWidth,
+                            viewfinderHeight
+                        ) * 0.70
+                    );
+
+                return {
+                    width: size,
+                    height: size
+                };
+            },
+
+            aspectRatio: 1.0,
+
+            disableFlip: false,
+
+            formatsToSupport: [
+                Html5QrcodeSupportedFormats.QR_CODE
+            ]
+
+        };
+
+
+        /* -------------------------------------------
+           TRY BACK CAMERA
+        ------------------------------------------- */
+
+        await scanner.start(
+
+            {
+                facingMode: "environment"
+            },
+
+            config,
+
+            onScanSuccess,
+
+            onScanFailure
+
         );
 
 
-        const status =
-            document.getElementById(
-                "scan-status"
-            );
+        cameraRunning = true;
 
 
-        if (status) {
+        console.log(
+            "CAMERA STARTED SUCCESSFULLY"
+        );
 
-            status.innerHTML =
-                '<span class="status-circle"></span> Camera is active. Point it at a QR code.';
 
-            status.style.color =
-                "#29d889";
-        }
+        setStatus(
+            "Camera active. Point the camera at a QR code.",
+            "#29d889"
+        );
 
-    })
 
-    .catch(function (error) {
+    }
+
+    catch (error) {
 
         console.error(
-            "CAMERA ERROR:",
+            "PRIMARY CAMERA ERROR:",
             error
         );
 
 
-        const status =
-            document.getElementById(
-                "scan-status"
+        /* -------------------------------------------
+           FALLBACK TO AVAILABLE CAMERA
+        ------------------------------------------- */
+
+        try {
+
+            if (scanner) {
+
+                try {
+
+                    await scanner.clear();
+
+                } catch (e) {
+
+                    console.warn(
+                        "Scanner clear warning:",
+                        e
+                    );
+                }
+
+            }
+
+
+            scanner = null;
+
+
+            const cameras =
+                await Html5Qrcode.getCameras();
+
+
+            console.log(
+                "AVAILABLE CAMERAS:",
+                cameras
             );
 
 
-        if (status) {
+            if (!cameras || cameras.length === 0) {
 
-            status.textContent =
-                "Camera permission denied or unavailable.";
+                throw new Error(
+                    "No camera detected."
+                );
+            }
 
-            status.style.color =
-                "#ff6b6b";
+
+            /* ---------------------------------------
+               SELECT CAMERA
+            --------------------------------------- */
+
+            let selectedCamera =
+                cameras[0];
+
+
+            for (
+                const camera of cameras
+            ) {
+
+                const label =
+                    (camera.label || "").toLowerCase();
+
+
+                if (
+                    label.includes("back") ||
+                    label.includes("rear") ||
+                    label.includes("environment")
+                ) {
+
+                    selectedCamera =
+                        camera;
+
+                    break;
+                }
+            }
+
+
+            console.log(
+                "SELECTED CAMERA:",
+                selectedCamera
+            );
+
+
+            scanner =
+                new Html5Qrcode("reader");
+
+
+            await scanner.start(
+
+                selectedCamera.id,
+
+                config,
+
+                onScanSuccess,
+
+                onScanFailure
+
+            );
+
+
+            cameraRunning = true;
+
+
+            console.log(
+                "FALLBACK CAMERA STARTED"
+            );
+
+
+            setStatus(
+                "Camera active. Point the camera at a QR code.",
+                "#29d889"
+            );
+
+
         }
-    });
+
+        catch (fallbackError) {
+
+            console.error(
+                "FALLBACK CAMERA ERROR:",
+                fallbackError
+            );
+
+
+            scanner = null;
+
+            cameraRunning = false;
+
+
+            setStatus(
+                "Camera could not start. Please allow camera permission.",
+                "#ff6b6b"
+            );
+        }
+    }
 }
 
 
-// =====================================================
-// STOP CAMERA
-// =====================================================
+/* =========================================================
+   STOP CAMERA
+========================================================= */
 
-function stopCamera() {
+async function stopCamera() {
 
     if (!scanner) {
         return;
     }
 
 
-    scanner.stop()
+    try {
 
-        .then(function () {
+        if (cameraRunning) {
 
-            console.log(
-                "Camera stopped."
-            );
-
-        })
-
-        .catch(function (error) {
+            await scanner.stop();
 
             console.log(
-                "Camera stop error:",
-                error
+                "CAMERA STOPPED"
             );
-        });
+        }
+
+
+        cameraRunning = false;
+
+
+    }
+
+    catch (error) {
+
+        console.warn(
+            "CAMERA STOP WARNING:",
+            error
+        );
+
+    }
 }
 
 
-// =====================================================
-// SEND QR TO PYTHON BACKEND
-// =====================================================
+/* =========================================================
+   ANALYZE QR
+========================================================= */
 
-function sendToPython() {
+function checkResult() {
+
+    console.log("--------------------------------");
+    console.log("ANALYZE BUTTON CLICKED");
+    console.log("--------------------------------");
+
 
     if (!scannedValue) {
 
-        console.error(
-            "No QR data available."
+        setStatus(
+            "No QR code detected.",
+            "#ff6b6b"
+        );
+
+        alert(
+            "No QR code detected. Please scan a QR code first."
         );
 
         return;
@@ -248,12 +500,69 @@ function sendToPython() {
 
 
     console.log(
-        "Sending QR to Python:",
+        "QR DATA:",
         scannedValue
     );
 
 
-    // Create POST form
+    /* -----------------------------------------------
+       GET FLASK ENDPOINT
+    ----------------------------------------------- */
+
+    const reader =
+        getElement("reader");
+
+
+    let endpoint =
+        "/analyze-qr";
+
+
+    if (
+        reader &&
+        reader.dataset &&
+        reader.dataset.analyzeUrl
+    ) {
+
+        endpoint =
+            reader.dataset.analyzeUrl;
+    }
+
+
+    console.log(
+        "FLASK ENDPOINT:",
+        endpoint
+    );
+
+
+    /* -----------------------------------------------
+       DISABLE BUTTON
+    ----------------------------------------------- */
+
+    const button =
+        document.querySelector(".analyze-btn");
+
+
+    if (button) {
+
+        button.disabled =
+            true;
+
+        button.textContent =
+            "🔄 Analyzing QR...";
+
+    }
+
+
+    setStatus(
+        "TRUESCAN is analyzing the QR code...",
+        "#55b7ff"
+    );
+
+
+    /* -----------------------------------------------
+       CREATE POST FORM
+    ----------------------------------------------- */
+
     const form =
         document.createElement("form");
 
@@ -263,10 +572,9 @@ function sendToPython() {
 
 
     form.action =
-        "/analyze-qr";
+        endpoint;
 
 
-    // QR data
     const input =
         document.createElement("input");
 
@@ -283,61 +591,82 @@ function sendToPython() {
         scannedValue;
 
 
-    form.appendChild(
-        input
+    form.appendChild(input);
+
+
+    document.body.appendChild(form);
+
+
+    console.log(
+        "SENDING QR DATA TO FLASK..."
     );
 
 
-    document.body.appendChild(
-        form
-    );
+    /* -----------------------------------------------
+       SEND
+    ----------------------------------------------- */
 
-
-    // Submit to Flask
     form.submit();
 }
 
 
-// =====================================================
-// MANUAL ANALYZE BUTTON
-// =====================================================
-
-function checkResult() {
-
-    if (!scannedValue) {
-
-        alert(
-            "No QR code detected."
-        );
-
-        return;
-    }
-
-
-    sendToPython();
-}
-
-
-// =====================================================
-// PAGE LOAD
-// =====================================================
+/* =========================================================
+   PAGE LOAD
+========================================================= */
 
 window.addEventListener(
     "load",
     function () {
 
-        console.log(
-            "TRUESCAN QR CAMERA LOADED"
-        );
+        console.log("--------------------------------");
+        console.log("TRUESCAN QR CAMERA PAGE LOADED");
+        console.log("--------------------------------");
 
 
-        setTimeout(
-            function () {
+        scannedValue = "";
 
-                startCamera();
+        scanCompleted = false;
 
-            },
-            500
-        );
+
+        const resultBox =
+            getElement("result-box");
+
+
+        if (resultBox) {
+
+            resultBox.style.display =
+                "none";
+        }
+
+
+        const button =
+            document.querySelector(".analyze-btn");
+
+
+        if (button) {
+
+            button.disabled =
+                true;
+
+            button.textContent =
+                "🔍 Analyze QR Code";
+        }
+
+
+        startCamera();
+    }
+);
+
+
+/* =========================================================
+   STOP CAMERA WHEN PAGE CLOSES
+========================================================= */
+
+window.addEventListener(
+    "beforeunload",
+    function () {
+
+        stopCamera();
+
     }
 );

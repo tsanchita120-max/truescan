@@ -7,202 +7,483 @@
 
     <title>TRUESCAN - Scan History</title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/history.css') }}">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #020d19;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .top-header {
+            height: 108px;
+            background: #031321;
+            border-bottom: 1px solid #163957;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 46px;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            color: white;
+            background: #09283f;
+            border: 1px solid #1a5278;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 22px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand img {
+            width: 54px;
+            height: 54px;
+            object-fit: contain;
+        }
+
+        .brand-text h2 {
+            font-size: 22px;
+        }
+
+        .brand-text p {
+            color: #6387a4;
+            font-size: 10px;
+            margin-top: 5px;
+        }
+
+        .online {
+            color: #35e39a;
+            font-size: 14px;
+        }
+
+        .online-dot {
+            display: inline-block;
+            width: 9px;
+            height: 9px;
+            background: #35e39a;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .history-container {
+            max-width: 1050px;
+            margin: 48px auto;
+            padding: 0 25px 100px;
+        }
+
+        .history-card {
+            background: #061827;
+            border: 1px solid #164462;
+            border-radius: 24px;
+            padding: 32px;
+        }
+
+        .title-row {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .title-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #0878d1, #12b8e8);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+        }
+
+        .title-row h1 {
+            font-size: 30px;
+        }
+
+        .title-row p {
+            color: #6d8da7;
+            margin-top: 6px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            background: #071c2c;
+            border: 1px solid #164462;
+            border-radius: 15px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .stat-box .icon {
+            font-size: 25px;
+        }
+
+        .stat-box h2 {
+            font-size: 24px;
+            margin-top: 8px;
+        }
+
+        .stat-box p {
+            color: #65849d;
+            margin-top: 5px;
+        }
+
+        .scan-item {
+            background: #071b2b;
+            border: 1px solid #174763;
+            border-radius: 15px;
+            padding: 22px;
+            margin-bottom: 15px;
+        }
+
+        .scan-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .scan-type {
+            color: #4dc9ff;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .risk-badge {
+            padding: 6px 13px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .safe {
+            color: #35e39a;
+            background: rgba(53, 227, 154, 0.12);
+        }
+
+        .suspicious {
+            color: #ffc857;
+            background: rgba(255, 200, 87, 0.12);
+        }
+
+        .dangerous {
+            color: #ff5c70;
+            background: rgba(255, 92, 112, 0.12);
+        }
+
+        .scan-content {
+            color: #c3d3df;
+            background: #04121f;
+            border: 1px solid #12374f;
+            border-radius: 9px;
+            padding: 13px;
+            word-break: break-word;
+            margin-bottom: 14px;
+        }
+
+        .scan-details {
+            display: flex;
+            justify-content: space-between;
+            color: #6f8da4;
+            font-size: 13px;
+        }
+
+        .score {
+            color: #4dc9ff;
+            font-weight: bold;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 70px 20px;
+        }
+
+        .empty-icon {
+            font-size: 55px;
+            margin-bottom: 15px;
+        }
+
+        .empty-state h2 {
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #68869e;
+            margin-bottom: 20px;
+        }
+
+        .scan-btn {
+            display: inline-block;
+            text-decoration: none;
+            color: white;
+            background: #087bd1;
+            padding: 12px 22px;
+            border-radius: 9px;
+        }
+
+        .dashboard-link {
+            display: inline-block;
+            margin-top: 25px;
+            color: #4dc9ff;
+            text-decoration: none;
+        }
+
+        @media (max-width: 600px) {
+
+            .top-header {
+                padding: 0 18px;
+                height: 90px;
+            }
+
+            .brand-text {
+                display: none;
+            }
+
+            .history-container {
+                margin-top: 25px;
+                padding: 0 14px 90px;
+            }
+
+            .history-card {
+                padding: 20px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .scan-top {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .scan-details {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
+
 </head>
 
 <body>
 
-<div class="history-page">
+<header class="top-header">
 
-    <!-- HEADER -->
-    <header class="history-header">
+    <a href="{{ url_for('dashboard') }}" class="back-btn">
+        ←
+    </a>
 
-        <a href="{{ url_for('dashboard') }}" class="back-btn">
-            ←
-        </a>
+    <div class="brand">
 
-        <div class="brand-area">
+        <img src="{{ url_for('static',
+                 filename='images/truescan-logo.png') }}"
+             alt="TRUESCAN">
 
-            <img src="{{ url_for('static',
-                    filename='images/truescan-logo.png') }}"
-                 alt="TRUESCAN Logo">
+        <div class="brand-text">
+
+            <h2>TRUESCAN</h2>
+
+            <p>SCAN • DETECT • PROTECT</p>
+
+        </div>
+
+    </div>
+
+    <div class="online">
+        <span class="online-dot"></span>
+        Online
+    </div>
+
+</header>
+
+
+<main class="history-container">
+
+    <div class="history-card">
+
+        <div class="title-row">
+
+            <div class="title-icon">
+                📋
+            </div>
 
             <div>
-                <h2>TRUESCAN</h2>
-                <p>SCAN • DETECT • PROTECT</p>
+
+                <h1>Scan History</h1>
+
+                <p>
+                    View your previous QR and link security checks.
+                </p>
+
             </div>
 
         </div>
 
-        <div class="online">
-            <span></span> Online
+
+        <!-- STATISTICS -->
+
+        <div class="stats">
+
+            <div class="stat-box">
+
+                <div class="icon">
+                    🔍
+                </div>
+
+                <h2>
+                    {{ total_scans }}
+                </h2>
+
+                <p>
+                    Total Scans
+                </p>
+
+            </div>
+
+
+            <div class="stat-box">
+
+                <div class="icon">
+                    🛡️
+                </div>
+
+                <h2>
+                    TRUESCAN
+                </h2>
+
+                <p>
+                    Security Scanner
+                </p>
+
+            </div>
+
         </div>
 
-    </header>
 
+        <!-- HISTORY -->
 
-    <!-- MAIN -->
-    <main class="history-main">
+        {% if records %}
 
-        <div class="history-card">
+            {% for scan in records %}
 
-            <!-- TITLE -->
-            <div class="page-title">
+                <div class="scan-item">
 
-                <div class="title-icon">
-                    📋
-                </div>
+                    <div class="scan-top">
 
-                <div>
-                    <h1>Scan History</h1>
-                    <p>View your previous QR and link security checks.</p>
-                </div>
+                        <div class="scan-type">
 
-            </div>
-
-
-            <!-- SUMMARY -->
-            <div class="history-summary">
-
-                <div class="summary-box">
-                    <span>🔍</span>
-                    <strong>{{ records|length }}</strong>
-                    <small>Total Scans</small>
-                </div>
-
-                <div class="summary-box">
-                    <span>🛡️</span>
-                    <strong>TRUESCAN</strong>
-                    <small>Security Scanner</small>
-                </div>
-
-            </div>
-
-
-            <!-- HISTORY -->
-            <div class="history-list">
-
-                {% if records %}
-
-                    {% for record in records %}
-
-                    <div class="history-item">
-
-                        <div class="history-icon">
-
-                            {% if record["scan_type"] == "Link" %}
-                                🔗
+                            {% if scan["scan_type"] == "QR Image" %}
+                                🖼️ QR Image
+                            {% elif scan["scan_type"] == "QR Camera" %}
+                                📷 QR Camera
+                            {% elif scan["scan_type"] == "Link" %}
+                                🔗 Link Check
                             {% else %}
-                                📷
+                                🔍 {{ scan["scan_type"] }}
                             {% endif %}
 
                         </div>
 
 
-                        <div class="history-content">
+                        {% set level = scan["result"]|lower %}
 
-                            <div class="history-top">
+                        <span class="risk-badge
+                            {% if 'danger' in level %}
+                                dangerous
+                            {% elif 'suspicious' in level %}
+                                suspicious
+                            {% else %}
+                                safe
+                            {% endif %}
+                        ">
 
-                                <h3>
-                                    {{ record["scan_type"] }}
-                                </h3>
+                            {{ scan["result"] }}
 
-                                {% if record["result"] == "Dangerous" %}
-
-                                    <span class="badge danger">
-                                        Dangerous
-                                    </span>
-
-                                {% elif record["result"] == "Suspicious" %}
-
-                                    <span class="badge suspicious">
-                                        Suspicious
-                                    </span>
-
-                                {% else %}
-
-                                    <span class="badge safe">
-                                        Safe
-                                    </span>
-
-                                {% endif %}
-
-                            </div>
-
-
-                            <p class="scan-value">
-                                {{ record["value"] }}
-                            </p>
-
-
-                            <div class="history-meta">
-
-                                <span>
-                                    Risk: {{ record["score"] }}/100
-                                </span>
-
-                                <span>
-                                    {{ record["created_at"] }}
-                                </span>
-
-                            </div>
-
-                        </div>
+                        </span>
 
                     </div>
 
-                    {% endfor %}
 
-                {% else %}
+                    <div class="scan-content">
 
-                    <div class="empty-history">
-
-                        <div class="empty-icon">
-                            📋
-                        </div>
-
-                        <h3>
-                            No Scan History
-                        </h3>
-
-                        <p>
-                            Your previous QR and link scans will appear here.
-                        </p>
-
-                        <a href="{{ url_for('dashboard') }}">
-                            Start Scanning →
-                        </a>
+                        {{ scan["value"] }}
 
                     </div>
 
-                {% endif %}
+
+                    <div class="scan-details">
+
+                        <span>
+                            Risk Score:
+                            <strong class="score">
+                                {{ scan["score"] }}/100
+                            </strong>
+                        </span>
+
+                        <span>
+                            {{ scan["created_at"] }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    📋
+                </div>
+
+                <h2>
+                    No Scan History
+                </h2>
+
+                <p>
+                    Your previous QR and link scans will appear here.
+                </p>
+
+                <a href="{{ url_for('qr_upload') }}"
+                   class="scan-btn">
+                    Start Scanning →
+                </a>
 
             </div>
 
-
-            <!-- BACK -->
-            <a href="{{ url_for('dashboard') }}"
-               class="dashboard-btn">
-
-                ← Back to Dashboard
-
-            </a>
-
-        </div>
-
-    </main>
+        {% endif %}
 
 
-    <!-- FOOTER -->
-    <footer>
+        <a href="{{ url_for('dashboard') }}"
+           class="dashboard-link">
+            ← Back to Dashboard
+        </a>
 
-        <p>© 2026 TRUESCAN</p>
-        <span>Your Digital Safety Partner</span>
+    </div>
 
-    </footer>
-
-</div>
-
+</main>
+<script src="{{ url_for('static', filename='js/truescan-language.js') }}"></script>
 </body>
 </html>

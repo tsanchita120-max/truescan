@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TRUESCAN - Security Settings</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/security_settings.css') }}">
+</head>
+
+<body>
+
+<header class="security-header">
+
+    <a href="{{ url_for('profile') }}" class="back-btn">
+        ← Profile
+    </a>
+
+    <div class="header-title">
+        🛡️ TRUESCAN
+    </div>
+
+    <a href="{{ url_for('logout') }}" class="logout-btn">
+        Logout
+    </a>
+
+</header>
+
+
+<main class="security-container">
+
+    <section class="page-heading">
+
+        <span class="heading-icon">
+            🔐
+        </span>
+
+        <div>
+            <h1>Security Settings</h1>
+
+            <p>
+                Manage your TRUESCAN protection and security preferences.
+            </p>
+        </div>
+
+    </section>
+
+
+    <!-- ================= SCAN PROTECTION ================= -->
+
+    <section class="settings-card">
+
+        <div class="card-heading">
+
+            <div class="card-icon">
+                🛡️
+            </div>
+
+            <div>
+                <h2>Scan Protection</h2>
+
+                <p>
+                    Configure how TRUESCAN checks suspicious content.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="setting-item">
+
+            <div class="setting-text">
+
+                <h3>Block Dangerous Links</h3>
+
+                <p>
+                    Prevent access to links identified as dangerous.
+                </p>
+
+            </div>
+
+            <label class="switch">
+
+                <input
+                    type="checkbox"
+                    id="blockDangerous"
+                    checked
+                    onchange="updateStatus()"
+                >
+
+                <span class="slider"></span>
+
+            </label>
+
+        </div>
+
+
+        <div class="setting-item">
+
+            <div class="setting-text">
+
+                <h3>Warn Before Opening</h3>
+
+                <p>
+                    Show a warning before opening suspicious links.
+                </p>
+
+            </div>
+
+            <label class="switch">
+
+                <input
+                    type="checkbox"
+                    id="warnOpening"
+                    checked
+                    onchange="updateStatus()"
+                >
+
+                <span class="slider"></span>
+
+            </label>
+
+        </div>
+
+
+        <div class="setting-item">
+
+            <div class="setting-text">
+
+                <h3>HTTPS Verification</h3>
+
+                <p>
+                    Check whether websites use a secure HTTPS connection.
+                </p>
+
+            </div>
+
+            <label class="switch">
+
+                <input
+                    type="checkbox"
+                    id="httpsVerification"
+                    checked
+                    onchange="updateStatus()"
+                >
+
+                <span class="slider"></span>
+
+            </label>
+
+        </div>
+
+
+        <div class="setting-item">
+
+            <div class="setting-text">
+
+                <h3>Suspicious Domain Check</h3>
+
+                <p>
+                    Check domains for suspicious characteristics.
+                </p>
+
+            </div>
+
+            <label class="switch">
+
+                <input
+                    type="checkbox"
+                    id="domainCheck"
+                    checked
+                    onchange="updateStatus()"
+                >
+
+                <span class="slider"></span>
+
+            </label>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ================= SECURITY STATUS ================= -->
+
+    <section class="status-card">
+
+        <div class="status-left">
+
+            <div class="status-shield">
+                🛡️
+            </div>
+
+            <div>
+
+                <span class="status-label">
+                    SECURITY STATUS
+                </span>
+
+                <h2 id="securityStatus">
+                    Strong
+                </h2>
+
+                <p id="securityMessage">
+                    Your main security protections are enabled.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="status-dot" id="statusDot"></div>
+
+    </section>
+
+
+
+    <!-- ================= TRUSTED DEVICES ================= -->
+
+    <section class="settings-card">
+
+        <div class="card-heading">
+
+            <div class="card-icon">
+                💻
+            </div>
+
+            <div>
+                <h2>Trusted Devices</h2>
+
+                <p>
+                    Manage devices currently used with your account.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="device-item">
+
+            <div class="device-icon">
+                💻
+            </div>
+
+            <div class="device-info">
+
+                <h3>
+                    Current Device
+                </h3>
+
+                <p>
+                    This device
+                </p>
+
+                <small>
+                    Active now
+                </small>
+
+            </div>
+
+            <span class="current-device">
+                Current
+            </span>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="danger-outline"
+            onclick="logoutAllDevices()"
+        >
+            🔒 Logout All Devices
+        </button>
+
+    </section>
+
+
+
+    <!-- ================= EMERGENCY SECURITY ================= -->
+
+    <section class="emergency-card">
+
+        <div class="card-heading">
+
+            <div class="card-icon emergency-icon">
+                🚨
+            </div>
+
+            <div>
+                <h2>Emergency Security</h2>
+
+                <p>
+                    Use these options if you believe your account is at risk.
+                </p>
+            </div>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="emergency-btn"
+            onclick="logoutAllDevices()"
+        >
+            🔐 Logout All Devices
+        </button>
+
+
+        <button
+            type="button"
+            class="clear-btn"
+            onclick="clearScanData()"
+        >
+            🗑️ Clear All Scan Data
+        </button>
+
+
+        <button
+            type="button"
+            class="reset-btn"
+            onclick="resetSecuritySettings()"
+        >
+            🔄 Reset Security Settings
+        </button>
+
+    </section>
+
+
+
+    <!-- ================= INFORMATION ================= -->
+
+    <section class="info-box">
+
+        <span>
+            ℹ️
+        </span>
+
+        <p>
+            TRUESCAN security settings help you identify suspicious
+            QR codes and links before interacting with them.
+        </p>
+
+    </section>
+
+</main>
+
+
+
+<!-- ================= BOTTOM NAV ================= -->
+
+<nav class="bottom-nav">
+
+    <a href="{{ url_for('dashboard') }}" class="nav-item">
+
+        <span>🏠</span>
+        <small>Home</small>
+
+    </a>
+
+
+    <a href="{{ url_for('history') }}" class="nav-item">
+
+        <span>🕒</span>
+        <small>History</small>
+
+    </a>
+
+
+    <a href="{{ url_for('profile') }}" class="nav-item active">
+
+        <span>👤</span>
+        <small>Profile</small>
+
+    </a>
+
+</nav>
+
+
+
+<script>
+
+function updateStatus() {
+
+    const settings = [
+
+        document.getElementById("blockDangerous").checked,
+
+        document.getElementById("warnOpening").checked,
+
+        document.getElementById("httpsVerification").checked,
+
+        document.getElementById("domainCheck").checked
+
+    ];
+
+    const enabled = settings.filter(Boolean).length;
+
+    const status = document.getElementById("securityStatus");
+    const message = document.getElementById("securityMessage");
+    const dot = document.getElementById("statusDot");
+
+
+    if (enabled === 4) {
+
+        status.textContent = "Strong";
+
+        message.textContent =
+            "Your main security protections are enabled.";
+
+        dot.className = "status-dot strong";
+
+    }
+
+    else if (enabled >= 2) {
+
+        status.textContent = "Moderate";
+
+        message.textContent =
+            "Some security protections are enabled.";
+
+        dot.className = "status-dot moderate";
+
+    }
+
+    else {
+
+        status.textContent = "Basic";
+
+        message.textContent =
+            "Consider enabling more security protections.";
+
+        dot.className = "status-dot basic";
+
+    }
+
+}
+
+
+/* ================= EMERGENCY ACTIONS ================= */
+
+function logoutAllDevices() {
+
+    const confirmLogout = confirm(
+        "Are you sure you want to logout from all devices?"
+    );
+
+    if (!confirmLogout) {
+        return;
+    }
+
+    window.location.href =
+        "{{ url_for('logout') }}";
+}
+
+
+function clearScanData() {
+
+    const confirmClear = confirm(
+        "Are you sure you want to clear all scan data? This action cannot be undone."
+    );
+
+    if (!confirmClear) {
+        return;
+    }
+
+    alert(
+        "Scan data clearing feature is ready to be connected to the database."
+    );
+}
+
+
+function resetSecuritySettings() {
+
+    const confirmReset = confirm(
+        "Reset all security settings?"
+    );
+
+    if (!confirmReset) {
+        return;
+    }
+
+
+    document.getElementById("blockDangerous").checked = true;
+
+    document.getElementById("warnOpening").checked = true;
+
+    document.getElementById("httpsVerification").checked = true;
+
+    document.getElementById("domainCheck").checked = true;
+
+    updateStatus();
+
+    alert(
+        "Security settings have been reset."
+    );
+}
+
+
+updateStatus();
+
+</script>
+<script src="{{ url_for('static', filename='js/truescan-language.js') }}"></script>
+</body>
+</html>

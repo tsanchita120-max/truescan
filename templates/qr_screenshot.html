@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TRUESCAN - QR Screenshot Analyzer</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/qr_screenshot.css') }}">
+</head>
+
+<body>
+
+<div class="page-wrapper">
+
+    <!-- ================= HEADER ================= -->
+    <header class="top-header">
+
+        <a href="{{ url_for('dashboard') }}" class="brand">
+
+            <div class="brand-logo">
+                <svg viewBox="0 0 64 64"
+                     xmlns="http://www.w3.org/2000/svg">
+
+                    <path
+                        d="M32 5
+                           L54 13
+                           V29
+                           C54 43 45 54 32 59
+                           C19 54 10 43 10 29
+                           V13
+                           Z"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="4"/>
+
+                    <path
+                        d="M21 32
+                           L28 39
+                           L44 22"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="4"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"/>
+                </svg>
+            </div>
+
+            <div class="brand-text">
+                <div class="brand-name">TRUESCAN</div>
+                <div class="brand-subtitle">
+                    QR Code &amp; Link Security
+                </div>
+            </div>
+
+        </a>
+
+
+        <a href="{{ url_for('dashboard') }}"
+           class="dashboard-btn">
+            <span>⌂</span>
+            Dashboard
+        </a>
+
+    </header>
+
+
+    <!-- ================= MAIN ================= -->
+    <main class="main-container">
+
+
+        <!-- PAGE TITLE -->
+        <section class="page-title">
+
+            <div class="title-icon">
+                📷
+            </div>
+
+            <div>
+                <h1>QR Screenshot Analyzer</h1>
+
+                <p>
+                    Upload a screenshot or image and TRUESCAN
+                    will automatically find the QR code.
+                </p>
+            </div>
+
+        </section>
+
+
+        <!-- ================= AUTOMATIC DETECTION ================= -->
+        <section class="detection-card">
+
+            <div class="detection-icon">
+                🛡️
+            </div>
+
+            <div class="detection-content">
+
+                <h2>Automatic QR Detection</h2>
+
+                <p>
+                    No cropping required. TRUESCAN searches
+                    the uploaded image for a QR code automatically.
+                </p>
+
+            </div>
+
+            <div class="detection-badge">
+                AUTO
+            </div>
+
+        </section>
+
+
+        <!-- ================= UPLOAD CARD ================= -->
+        <section class="upload-card">
+
+            <div class="upload-header">
+
+                <div class="upload-icon">
+                    📷
+                </div>
+
+                <div>
+                    <h2>Upload Screenshot</h2>
+
+                    <p>
+                        Select an image containing a QR code
+                        to begin security analysis.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <!-- UPLOAD AREA -->
+            <form
+                id="qrScreenshotForm"
+                action="{{ url_for('qr_screenshot') }}"
+                method="POST"
+                enctype="multipart/form-data">
+
+
+                <label
+                    for="qrImage"
+                    class="upload-area"
+                    id="uploadArea">
+
+                    <div class="upload-area-icon">
+                        ↑
+                    </div>
+
+                    <h3>
+                        Drag &amp; drop your image here
+                    </h3>
+
+                    <p class="upload-or">
+                        or
+                    </p>
+
+                    <span class="browse-btn">
+                        Click to select an image
+                    </span>
+
+                    <p class="file-types">
+                        PNG • JPG • JPEG • WEBP • BMP • GIF
+                    </p>
+
+                    <p
+                        class="selected-file"
+                        id="selectedFile">
+                    </p>
+
+                    <input
+                        type="file"
+                        id="qrImage"
+                        name="file"
+                        accept=".png,.jpg,.jpeg,.webp,.bmp,.gif,image/*"
+                        hidden>
+
+                </label>
+
+
+                <!-- ANALYZE BUTTON -->
+                <button
+                    type="submit"
+                    class="analyze-btn"
+                    id="analyzeBtn"
+                    disabled>
+
+                    <span class="analyze-icon">
+                        🔍
+                    </span>
+
+                    <span id="analyzeText">
+                        Find &amp; Analyze QR
+                    </span>
+
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- ================= PROCESS STEPS ================= -->
+        <section class="steps-section">
+
+            <div class="steps-heading">
+                <span>HOW IT WORKS</span>
+            </div>
+
+
+            <div class="steps">
+
+
+                <!-- STEP 1 -->
+                <div class="step-card active">
+
+                    <div class="step-number">
+                        1
+                    </div>
+
+                    <div class="step-icon">
+                        📤
+                    </div>
+
+                    <h3>
+                        Upload Screenshot
+                    </h3>
+
+                    <p>
+                        Select an image
+                    </p>
+
+                </div>
+
+
+                <div class="step-line"></div>
+
+
+                <!-- STEP 2 -->
+                <div class="step-card">
+
+                    <div class="step-number">
+                        2
+                    </div>
+
+                    <div class="step-icon">
+                        🔎
+                    </div>
+
+                    <h3>
+                        QR is Detected
+                    </h3>
+
+                    <p>
+                        Automatic detection
+                    </p>
+
+                </div>
+
+
+                <div class="step-line"></div>
+
+
+                <!-- STEP 3 -->
+                <div class="step-card">
+
+                    <div class="step-number">
+                        3
+                    </div>
+
+                    <div class="step-icon">
+                        🛡️
+                    </div>
+
+                    <h3>
+                        Security Result
+                    </h3>
+
+                    <p>
+                        Risk analysis
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= SECURITY NOTE ================= -->
+        <div class="security-note">
+
+            <div class="security-note-icon">
+                🛡️
+            </div>
+
+            <div>
+                <strong>
+                    Your security matters
+                </strong>
+
+                <p>
+                    TRUESCAN analyzes the QR content before
+                    showing the security result. Avoid entering
+                    sensitive information on unknown websites.
+                </p>
+            </div>
+
+        </div>
+
+
+    </main>
+
+
+    <!-- ================= BOTTOM NAV ================= -->
+    <nav class="bottom-nav">
+
+        <a href="{{ url_for('dashboard') }}"
+           class="nav-item active">
+
+            <span class="nav-icon">⌂</span>
+            <span>Home</span>
+
+        </a>
+
+
+        <a href="{{ url_for('history') }}"
+           class="nav-item">
+
+            <span class="nav-icon">🕘</span>
+            <span>History</span>
+
+        </a>
+
+
+        <a href="{{ url_for('profile') }}"
+           class="nav-item">
+
+            <span class="nav-icon">👤</span>
+            <span>Profile</span>
+
+        </a>
+
+    </nav>
+
+</div>
+
+
+<!-- ================= JAVASCRIPT ================= -->
+<script>
+
+const fileInput = document.getElementById("qrImage");
+const uploadArea = document.getElementById("uploadArea");
+const selectedFile = document.getElementById("selectedFile");
+const analyzeBtn = document.getElementById("analyzeBtn");
+const analyzeText = document.getElementById("analyzeText");
+const form = document.getElementById("qrScreenshotForm");
+
+
+/* ==========================================
+   FILE SELECT
+   ========================================== */
+
+fileInput.addEventListener("change", function () {
+
+    if (this.files && this.files.length > 0) {
+
+        const file = this.files[0];
+
+        showSelectedFile(file);
+
+    }
+
+});
+
+
+/* ==========================================
+   SHOW SELECTED FILE
+   ========================================== */
+
+function showSelectedFile(file) {
+
+    selectedFile.textContent =
+        "✓ " + file.name;
+
+    selectedFile.classList.add("show");
+
+    uploadArea.classList.add("selected");
+
+    analyzeBtn.disabled = false;
+
+}
+
+
+/* ==========================================
+   DRAG OVER
+   ========================================== */
+
+uploadArea.addEventListener("dragover", function (event) {
+
+    event.preventDefault();
+
+    uploadArea.classList.add("dragging");
+
+});
+
+
+/* ==========================================
+   DRAG LEAVE
+   ========================================== */
+
+uploadArea.addEventListener("dragleave", function () {
+
+    uploadArea.classList.remove("dragging");
+
+});
+
+
+/* ==========================================
+   DROP
+   ========================================== */
+
+uploadArea.addEventListener("drop", function (event) {
+
+    event.preventDefault();
+
+    uploadArea.classList.remove("dragging");
+
+    const files = event.dataTransfer.files;
+
+    if (files.length > 0) {
+
+        const file = files[0];
+
+        const validTypes = [
+            "image/png",
+            "image/jpeg",
+            "image/webp",
+            "image/bmp",
+            "image/gif"
+        ];
+
+        if (!validTypes.includes(file.type)) {
+
+            alert(
+                "Please select a valid image file."
+            );
+
+            return;
+        }
+
+
+        /*
+         * Put dropped file into input.
+         */
+
+        const dataTransfer =
+            new DataTransfer();
+
+        dataTransfer.items.add(file);
+
+        fileInput.files =
+            dataTransfer.files;
+
+
+        showSelectedFile(file);
+
+    }
+
+});
+
+
+/* ==========================================
+   FORM SUBMIT
+   ========================================== */
+
+form.addEventListener("submit", function () {
+
+    if (!fileInput.files.length) {
+
+        return;
+
+    }
+
+    analyzeBtn.disabled = true;
+
+    analyzeBtn.classList.add("loading");
+
+    analyzeText.textContent =
+        "Analyzing QR...";
+
+});
+
+
+</script>
+
+</body>
+</html>

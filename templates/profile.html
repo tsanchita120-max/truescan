@@ -2,189 +2,424 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>TRUESCAN - My Profile</title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/profile.css') }}">
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/profile.css') }}?v=3"
+    >
+
 </head>
+
 
 <body>
 
-<div class="profile-page">
+<div class="ts-profile-page">
 
-    <!-- HEADER -->
-    <header class="profile-header">
 
-        <a href="{{ url_for('dashboard') }}" class="back-btn">
+    <!-- ================= HEADER ================= -->
+
+    <header class="ts-profile-header">
+
+        <a
+            href="{{ url_for('dashboard') }}"
+            class="ts-back-btn"
+        >
             ←
         </a>
 
-        <div class="brand-area">
 
-            <img src="{{ url_for('static',
-                    filename='images/truescan-logo.png') }}"
-                 alt="TRUESCAN Logo">
+        <div class="ts-brand">
 
-            <div>
+            <img
+                src="{{ url_for('static', filename='images/truescan-logo.png') }}"
+                alt="TRUESCAN Logo"
+                class="ts-brand-logo"
+            >
+
+            <div class="ts-brand-text">
+
                 <h2>TRUESCAN</h2>
-                <p>SCAN • DETECT • PROTECT</p>
+
+                <p>
+                    SCAN • DETECT • PROTECT
+                </p>
+
             </div>
 
         </div>
 
-        <div class="online">
-            <span></span> Online
+
+        <div class="ts-online">
+            <span></span>
+            Online
         </div>
 
     </header>
 
 
-    <!-- MAIN -->
-    <main class="profile-main">
 
-        <div class="profile-card">
+    <!-- ================= MAIN ================= -->
 
-            <!-- PROFILE TOP -->
-            <div class="profile-top">
+    <main class="ts-profile-main">
 
-                <div class="profile-avatar">
-                    👤
-                </div>
 
-                <div>
-                    <h1>My Profile</h1>
-                    <p>Manage your TRUESCAN account</p>
-                </div>
+        <!-- ================= TITLE ================= -->
+
+        <section class="ts-page-title">
+
+            <div class="ts-title-icon">
+                👤
+            </div>
+
+            <div>
+
+                <h1>
+                    My Profile
+                </h1>
+
+                <p>
+                    Manage your TRUESCAN account
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= PROFILE CARD ================= -->
+
+        <section class="ts-profile-card">
+
+
+            <!-- PROFILE IMAGE -->
+
+            <div class="ts-avatar-section">
+
+                {% if user["profile_image"] %}
+
+                    <img
+                        src="{{ url_for('static', filename='uploads/profile/' + user['profile_image']) }}"
+                        alt="Profile Photo"
+                        class="ts-profile-image"
+                    >
+
+                {% else %}
+
+                    <div class="ts-profile-placeholder">
+                        {{ user["name"][0]|upper }}
+                    </div>
+
+                {% endif %}
+
+
+                <form
+                    action="{{ url_for('upload_profile_image') }}"
+                    method="POST"
+                    enctype="multipart/form-data"
+                    class="ts-photo-form"
+                >
+
+                    <label
+                        for="ts-profile-image-input"
+                        class="ts-change-photo"
+                    >
+                        📷 Change Photo
+                    </label>
+
+                    <input
+                        type="file"
+                        id="ts-profile-image-input"
+                        name="profile_image"
+                        accept=".jpg,.jpeg,.png,.webp"
+                        hidden
+                        onchange="this.form.submit()"
+                    >
+
+                </form>
 
             </div>
 
 
-            <!-- USER INFO -->
-            <div class="profile-info">
 
-                <div class="info-row">
+            <!-- USER NAME -->
 
-                    <div class="info-icon">
+            <div class="ts-user-name">
+
+                <h2>
+                    {{ user["name"] }}
+                </h2>
+
+                <p>
+                    {{ user["email"] }}
+                </p>
+
+            </div>
+
+
+
+            <!-- ================= USER INFORMATION ================= -->
+
+            <div class="ts-info-list">
+
+
+                <div class="ts-info-row">
+
+                    <div class="ts-info-icon">
                         👤
                     </div>
 
-                    <div>
-                        <small>Full Name</small>
-                        <strong>{{ user["name"] }}</strong>
+                    <div class="ts-info-content">
+
+                        <small>
+                            FULL NAME
+                        </small>
+
+                        <strong>
+                            {{ user["name"] }}
+                        </strong>
+
                     </div>
 
                 </div>
 
 
-                <div class="info-row">
 
-                    <div class="info-icon">
+                <div class="ts-info-row">
+
+                    <div class="ts-info-icon">
                         ✉️
                     </div>
 
-                    <div>
-                        <small>Email Address</small>
-                        <strong>{{ user["email"] }}</strong>
+                    <div class="ts-info-content">
+
+                        <small>
+                            EMAIL ADDRESS
+                        </small>
+
+                        <strong>
+                            {{ user["email"] }}
+                        </strong>
+
                     </div>
 
                 </div>
 
 
-                <div class="info-row">
 
-                    <div class="info-icon">
+                <div class="ts-info-row">
+
+                    <div class="ts-info-icon">
                         🛡️
                     </div>
 
-                    <div>
-                        <small>Account Role</small>
-                        <strong>{{ user["role"] }}</strong>
+                    <div class="ts-info-content">
+
+                        <small>
+                            ACCOUNT ROLE
+                        </small>
+
+                        <strong>
+                            {{ user["role"] }}
+                        </strong>
+
                     </div>
 
                 </div>
 
 
-                <div class="info-row">
 
-                    <div class="info-icon">
+                <div class="ts-info-row">
+
+                    <div class="ts-info-icon">
                         ✅
                     </div>
 
-                    <div>
-                        <small>Account Status</small>
-                        <strong class="active">
+                    <div class="ts-info-content">
+
+                        <small>
+                            ACCOUNT STATUS
+                        </small>
+
+                        <strong class="ts-active">
                             Active
                         </strong>
+
                     </div>
 
                 </div>
+
 
             </div>
 
 
-            <!-- SECURITY -->
-            <div class="security-box">
 
-                <div class="security-icon">
+            <!-- ================= SECURITY ================= -->
+
+            <div class="ts-security-box">
+
+                <div class="ts-security-icon">
                     🔐
                 </div>
 
                 <div>
-                    <h3>Account Security</h3>
+
+                    <h3>
+                        Account Security
+                    </h3>
+
                     <p>
                         Your account is protected by TRUESCAN.
                         Never share your password with anyone.
                     </p>
+
                 </div>
 
             </div>
 
 
-            <!-- ACTIONS -->
-            <div class="profile-actions">
 
-                <a href="{{ url_for('history') }}"
-                   class="action-btn">
-                    📋 Scan History
-                </a>
+            <!-- ================= SECURITY SETTINGS ================= -->
 
-                <a href="{{ url_for('report') }}"
-                   class="action-btn">
-                    🚨 Report Scam
-                </a>
+            <div class="ts-security-status">
 
-                <a href="{{ url_for('logout') }}"
-                   class="logout-btn">
-                    🚪 Logout
+                <div class="ts-status-icon">
+                    🛡️
+                </div>
+
+                <div class="ts-status-content">
+
+                    <small>
+                        SECURITY STATUS
+                    </small>
+
+                    <strong>
+                        Strong
+                    </strong>
+
+                    <p>
+                        Your account has active security protection.
+                    </p>
+
+                </div>
+
+                <a
+                    href="{{ url_for('security_settings') }}"
+                    class="ts-security-btn"
+                >
+                    ⚙️ Security Settings
                 </a>
 
             </div>
 
 
-            <a href="{{ url_for('dashboard') }}"
-               class="dashboard-btn">
 
-                ← Back to Dashboard
+            <!-- ================= ACTIONS ================= -->
 
-            </a>
+            <div class="ts-actions">
 
-        </div>
+
+                <a
+                    href="{{ url_for('history') }}"
+                    class="ts-action-btn"
+                >
+                    📋 Scan History
+                </a>
+
+
+                <a
+                    href="{{ url_for('report') }}"
+                    class="ts-action-btn"
+                >
+                    🚨 Report Scam
+                </a>
+
+
+                <a
+                    href="{{ url_for('logout') }}"
+                    class="ts-logout-btn"
+                >
+                    🚪 Logout
+                </a>
+
+
+            </div>
+
+
+        </section>
+
 
     </main>
 
 
-    <!-- FOOTER -->
-    <footer>
 
-        <p>© 2026 TRUESCAN</p>
-        <span>Your Digital Safety Partner</span>
+    <!-- ================= BOTTOM NAV ================= -->
 
-    </footer>
+    <nav class="ts-bottom-nav">
+
+
+        <a
+            href="{{ url_for('dashboard') }}"
+            class="ts-nav-item"
+        >
+
+            <span>
+                🏠
+            </span>
+
+            <small>
+                Home
+            </small>
+
+        </a>
+
+
+        <a
+            href="{{ url_for('history') }}"
+            class="ts-nav-item"
+        >
+
+            <span>
+                🕒
+            </span>
+
+            <small>
+                History
+            </small>
+
+        </a>
+
+
+        <a
+            href="{{ url_for('profile') }}"
+            class="ts-nav-item active"
+        >
+
+            <span>
+                👤
+            </span>
+
+            <small>
+                Profile
+            </small>
+
+        </a>
+
+
+    </nav>
+
 
 </div>
+<script src="{{ url_for('static', filename='js/truescan-language.js') }}"></script>
 
 </body>
 </html>

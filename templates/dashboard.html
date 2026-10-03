@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ current_language or 'en' }}">
 
 <head>
 
@@ -8,61 +8,153 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>TRUESCAN - Dashboard</title>
+    <title>TRUESCAN | Dashboard</title>
 
     <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/dashboard.css', v='3') }}">
+          href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+    <!-- GLOBAL LANGUAGE -->
+    <script
+        src="{{ url_for('static', filename='js/truescan-language.js') }}"
+        defer>
+    </script>
 
 </head>
 
 
 <body>
 
+<div class="dashboard-page">
 
-<div class="app">
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="top-header">
 
 
-    <!-- ================= HEADER ================= -->
+        <!-- BRAND -->
 
-    <header class="app-header">
+        <div class="brand-area">
 
-        <div class="brand">
 
-            <img
-                src="{{ url_for('static', filename='images/truescan-logo.png') }}"
-                alt="TRUESCAN Logo">
+            <!-- ACTUAL TRUESCAN LOGO -->
+
+            <div class="brand-logo">
+
+                <img
+                    src="{{ url_for('static', filename='images/truescan-logo.png') }}"
+                    alt="TRUESCAN Logo"
+                    class="truescan-logo">
+
+            </div>
+
 
             <div class="brand-text">
 
-                <h2>TRUESCAN</h2>
+                <h1>
+                    TRUESCAN
+                </h1>
 
-                <span>
-                    Scan • Detect • Protect
-                </span>
+                <p data-i18n="brand_subtitle">
+                    QR Code &amp; Link Security
+                </p>
 
             </div>
 
         </div>
 
 
-        <div class="header-icons">
+
+        <!-- HEADER ACTIONS -->
+
+        <div class="header-actions">
+
+
+            <!-- LANGUAGE -->
+
+            <div class="language-switcher">
+
+                <span
+                    class="language-icon"
+                    aria-hidden="true">
+                    🌐
+                </span>
+
+
+                <label
+                    for="languageSelect"
+                    class="sr-only">
+                    Language
+                </label>
+
+
+                <select
+                    id="languageSelect"
+                    class="language-select"
+                    aria-label="Select language">
+
+                    <option value="en">
+                        English
+                    </option>
+
+                    <option value="mr">
+                        मराठी
+                    </option>
+
+                    <option value="hi">
+                        हिन्दी
+                    </option>
+
+                </select>
+
+            </div>
+
+
+
+            <!-- ALERT -->
 
             <a
-                href="{{ url_for('profile') }}"
-                class="header-icon"
-                title="Notifications">
+                href="{{ url_for('alerts') }}"
+                class="header-button"
+                aria-label="Alerts">
 
                 🔔
+
+
+                {% if unread_alerts and unread_alerts > 0 %}
+
+                    <span class="alert-badge">
+                        {{ unread_alerts }}
+                    </span>
+
+                {% endif %}
 
             </a>
 
 
+
+            <!-- PROFILE -->
+
             <a
                 href="{{ url_for('profile') }}"
-                class="header-icon"
-                title="Profile">
+                class="profile-button">
 
-                👤
+
+                <span class="profile-avatar">
+
+                    {{ (name or 'U')[0]|upper }}
+
+                </span>
+
+
+                <span class="profile-name">
+
+                    {{ name or 'User' }}
+
+                </span>
+
 
             </a>
 
@@ -72,61 +164,291 @@
 
 
 
-    <!-- ================= MAIN ================= -->
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
 
     <main class="main-content">
 
 
-        <!-- WELCOME -->
+        <!-- =================================================
+             WELCOME
+        ================================================== -->
 
-        <section class="welcome">
-
-            <span class="welcome-label">
-                SECURITY DASHBOARD
-            </span>
+        <section class="welcome-section">
 
 
-            <h1>
-                Welcome to
-                <span>TRUESCAN</span>
-            </h1>
+            <div>
+
+                <p
+                    class="welcome-small"
+                    data-i18n="welcome_back">
+
+                    Welcome back
+
+                </p>
 
 
-            <p>
-                Protect yourself from QR codes and suspicious links.
-            </p>
-
-        </section>
+                <h2>
+                    {{ name or 'User' }}
+                </h2>
 
 
+                <p
+                    class="welcome-text"
+                    data-i18n="welcome_description">
 
-        <!-- SECURITY STATUS -->
+                    Keep your QR codes and links safe with TRUESCAN.
 
-        <section class="security-card">
-
-            <div class="shield">
-                🛡️
-            </div>
-
-
-            <div class="security-info">
-
-                <h3>
-                    You're Protected
-                </h3>
-
-                <p>
-                    TRUESCAN is ready to analyze suspicious QR codes and links.
                 </p>
 
             </div>
 
 
-            <div class="online">
 
-                <span></span>
+            <div class="security-status">
 
-                Online
+                <span class="status-dot"></span>
+
+
+                <span data-i18n="security_active">
+
+                    Security Active
+
+                </span>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             SECURITY SCANNER
+        ================================================== -->
+
+        <section class="section-block">
+
+
+            <div class="section-heading">
+
+
+                <div class="section-title-icon">
+                    🔍
+                </div>
+
+
+                <div>
+
+                    <h3 data-i18n="security_scanner">
+
+                        Security Scanner
+
+                    </h3>
+
+
+                    <p data-i18n="scanner_description">
+
+                        Scan QR codes and check links for security risks.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="scanner-grid">
+
+
+                <!-- =========================================
+                     QR CAMERA
+                ========================================== -->
+
+                <a
+                    href="{{ url_for('qr_camera') }}"
+                    class="scanner-card">
+
+
+                    <div class="scanner-icon">
+                        📷
+                    </div>
+
+
+                    <div class="scanner-content">
+
+
+                        <h4 data-i18n="qr_camera_scan">
+
+                            QR Camera Scan
+
+                        </h4>
+
+
+                        <p data-i18n="qr_camera_description">
+
+                            Scan a QR code directly using your camera.
+
+                        </p>
+
+
+                        <span
+                            class="scanner-action"
+                            data-i18n="start_scan">
+
+                            Start Scan →
+
+                        </span>
+
+
+                    </div>
+
+
+                </a>
+
+
+
+                <!-- =========================================
+                     QR IMAGE UPLOAD
+                ========================================== -->
+
+                <a
+                    href="{{ url_for('qr_upload') }}"
+                    class="scanner-card">
+
+
+                    <div class="scanner-icon">
+                        🖼️
+                    </div>
+
+
+                    <div class="scanner-content">
+
+
+                        <h4 data-i18n="qr_image_upload">
+
+                            QR Image Upload
+
+                        </h4>
+
+
+                        <p data-i18n="qr_image_description">
+
+                            Upload a QR image and analyze its content.
+
+                        </p>
+
+
+                        <span
+                            class="scanner-action"
+                            data-i18n="upload_image">
+
+                            Upload Image →
+
+                        </span>
+
+
+                    </div>
+
+
+                </a>
+
+
+
+                <!-- =========================================
+                     LINK CHECKER
+                ========================================== -->
+
+                <a
+                    href="{{ url_for('link_checker') }}"
+                    class="scanner-card">
+
+
+                    <div class="scanner-icon">
+                        🔗
+                    </div>
+
+
+                    <div class="scanner-content">
+
+
+                        <h4 data-i18n="link_checker">
+
+                            Link / URL Checker
+
+                        </h4>
+
+
+                        <p data-i18n="link_description">
+
+                            Check a URL for suspicious or unsafe patterns.
+
+                        </p>
+
+
+                        <span
+                            class="scanner-action"
+                            data-i18n="check_link">
+
+                            Check Link →
+
+                        </span>
+
+
+                    </div>
+
+
+                </a>
+
+
+
+                <!-- =========================================
+                     REPORT SPAM
+                ========================================== -->
+
+                <a
+                    href="{{ url_for('report') }}"
+                    class="scanner-card">
+
+
+                    <div class="scanner-icon">
+                        🚨
+                    </div>
+
+
+                    <div class="scanner-content">
+
+
+                        <h4 data-i18n="report_spam">
+
+                            Report Spam
+
+                        </h4>
+
+
+                        <p data-i18n="report_spam_description">
+
+                            Report a suspicious QR code or malicious link.
+
+                        </p>
+
+
+                        <span
+                            class="scanner-action"
+                            data-i18n="report_now">
+
+                            Report Now →
+
+                        </span>
+
+
+                    </div>
+
+
+                </a>
+
 
             </div>
 
@@ -134,237 +456,558 @@
 
 
 
-        <!-- SECURITY TOOLS -->
+        <!-- =================================================
+             SECURITY OVERVIEW
+        ================================================== -->
 
-        <div class="section-heading">
-
-            <h2>
-                Security Tools
-            </h2>
-
-            <span>
-                3 Tools
-            </span>
-
-        </div>
+        <section class="section-block">
 
 
+            <div class="section-heading">
 
-        <div class="tools">
 
-
-            <!-- QR CAMERA -->
-
-            <a
-                href="{{ url_for('qr_camera') }}"
-                class="tool-card">
-
-                <div class="tool-icon camera">
-                    📷
+                <div class="section-title-icon">
+                    📊
                 </div>
 
 
-                <div class="tool-info">
+                <div>
 
-                    <h3>
-                        QR Camera Scan
+                    <h3 data-i18n="security_overview">
+
+                        Security Overview
+
                     </h3>
 
-                    <p>
-                        Scan a QR code using your camera.
+
+                    <p data-i18n="overview_description">
+
+                        Your recent scanning activity.
+
                     </p>
 
-                    <span class="tool-action">
-
-                        Open Camera
-
-                        <b>→</b>
-
-                    </span>
-
                 </div>
 
-            </a>
-
-
-
-            <!-- QR UPLOAD -->
-
-            <a
-                href="{{ url_for('qr_upload') }}"
-                class="tool-card">
-
-                <div class="tool-icon upload">
-                    🖼️
-                </div>
-
-
-                <div class="tool-info">
-
-                    <h3>
-                        QR Image Upload
-                    </h3>
-
-                    <p>
-                        Upload a QR image and check it for suspicious content.
-                    </p>
-
-                    <span class="tool-action">
-
-                        Upload Image
-
-                        <b>→</b>
-
-                    </span>
-
-                </div>
-
-            </a>
-
-
-
-            <!-- LINK CHECKER -->
-
-            <a
-                href="{{ url_for('link_checker') }}"
-                class="tool-card">
-
-                <div class="tool-icon link">
-                    🔗
-                </div>
-
-
-                <div class="tool-info">
-
-                    <h3>
-                        Link Scam Checker
-                    </h3>
-
-                    <p>
-                        Check a website link for possible scam indicators.
-                    </p>
-
-                    <span class="tool-action">
-
-                        Check Link
-
-                        <b>→</b>
-
-                    </span>
-
-                </div>
-
-            </a>
-
-
-        </div>
-
-
-
-        <!-- RECENT SCANS -->
-
-        <div class="section-heading recent-heading">
-
-            <h2>
-                Recent Scans
-            </h2>
-
-
-            <a href="{{ url_for('history') }}">
-                View All
-            </a>
-
-        </div>
-
-
-
-        <div class="empty-history">
-
-            <div class="history-icon">
-                📋
             </div>
 
 
-            <h3>
-                No recent scans
-            </h3>
+
+            <div class="stats-grid">
 
 
-            <p>
-                Your scanned QR codes and links will appear here.
-            </p>
+                <!-- TOTAL SCANS -->
 
-        </div>
+                <div class="stat-card">
+
+
+                    <div class="stat-icon">
+                        🔍
+                    </div>
+
+
+                    <div>
+
+                        <span
+                            class="stat-label"
+                            data-i18n="total_scans">
+
+                            Total Scans
+
+                        </span>
+
+
+                        <strong class="stat-value">
+
+                            {{ total_scans or 0 }}
+
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- LAST 7 DAYS -->
+
+                <div class="stat-card">
+
+
+                    <div class="stat-icon">
+                        📅
+                    </div>
+
+
+                    <div>
+
+                        <span
+                            class="stat-label"
+                            data-i18n="last_7_days">
+
+                            Last 7 Days
+
+                        </span>
+
+
+                        <strong class="stat-value">
+
+                            {{ weekly_total or 0 }}
+
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- SECURITY STATUS -->
+
+                <div class="stat-card">
+
+
+                    <div class="stat-icon">
+                        🛡️
+                    </div>
+
+
+                    <div>
+
+                        <span
+                            class="stat-label"
+                            data-i18n="security_status">
+
+                            Security Status
+
+                        </span>
+
+
+                        <strong
+                            class="stat-safe"
+                            data-i18n="active">
+
+                            Active
+
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             DAILY ACTIVITY
+        ================================================== -->
+
+        <section class="activity-card">
+
+
+            <div class="activity-header">
+
+
+                <div>
+
+                    <h3 data-i18n="daily_activity">
+
+                        Daily Scan Activity
+
+                    </h3>
+
+
+                    <p data-i18n="daily_activity_description">
+
+                        Your scans during the last 7 days.
+
+                    </p>
+
+                </div>
+
+
+                <span class="activity-total">
+
+                    {{ weekly_total or 0 }}
+
+                    <span data-i18n="scans">
+                        scans
+                    </span>
+
+                </span>
+
+
+            </div>
+
+
+
+            <div class="activity-chart">
+
+
+                {% for row in daily_scans %}
+
+
+                    <div class="chart-column">
+
+
+                        <span class="chart-number">
+
+                            {{ row["scan_count"] }}
+
+                        </span>
+
+
+                        <div class="chart-bar-container">
+
+
+                            {% if daily_max and daily_max > 0 %}
+
+
+                                <div
+                                    class="chart-bar"
+                                    style="height: {{ ((row['scan_count'] / daily_max) * 100)|round|int }}%;">
+                                </div>
+
+
+                            {% else %}
+
+
+                                <div
+                                    class="chart-bar"
+                                    style="height: 8%;">
+                                </div>
+
+
+                            {% endif %}
+
+
+                        </div>
+
+
+                        <span class="chart-date">
+
+                            {{ row["scan_date"][5:] }}
+
+                        </span>
+
+
+                    </div>
+
+
+                {% else %}
+
+
+                    <div class="empty-chart">
+
+
+                        <span>
+                            📊
+                        </span>
+
+
+                        <p data-i18n="no_activity">
+
+                            No scan activity yet.
+
+                        </p>
+
+
+                    </div>
+
+
+                {% endfor %}
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             RECENT SCANS
+        ================================================== -->
+
+        <section class="recent-section">
+
+
+            <div class="recent-heading">
+
+
+                <div class="recent-title-wrapper">
+
+
+                    <div class="recent-icon">
+                        🕘
+                    </div>
+
+
+                    <div>
+
+
+                        <h3 data-i18n="recent_scans">
+
+                            Recent Scans
+
+                        </h3>
+
+
+                        <p data-i18n="recent_scans_description">
+
+                            Your latest security scan results.
+
+                        </p>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <a
+                    href="{{ url_for('history') }}"
+                    class="history-link"
+                    data-i18n="view_history">
+
+                    View History →
+
+                </a>
+
+
+            </div>
+
+
+
+            <div class="recent-scans-card">
+
+
+                {% for scan in recent_scans %}
+
+
+                    <div class="recent-scan-item">
+
+
+                        <!-- SCAN ICON -->
+
+                        <div class="recent-scan-icon">
+
+
+                            {% if scan["scan_type"] == "Link" %}
+
+                                🔗
+
+                            {% else %}
+
+                                ▣
+
+                            {% endif %}
+
+
+                        </div>
+
+
+
+                        <!-- SCAN INFO -->
+
+                        <div class="recent-scan-info">
+
+
+                            <strong data-i18n="security_scan">
+
+                                Security Scan
+
+                            </strong>
+
+
+                            <span>
+
+                                {{ scan["scan_type"] }}
+
+                            </span>
+
+
+                        </div>
+
+
+
+                        <!-- SCORE + RISK -->
+
+                        <div class="recent-scan-result">
+
+
+                            <strong>
+
+                                {{ scan["score"]|int }}/100
+
+                            </strong>
+
+
+                            {% if scan["score"]|int >= 60 %}
+
+
+                                <span
+                                    class="risk-dangerous"
+                                    data-i18n="dangerous">
+
+                                    Dangerous
+
+                                </span>
+
+
+                            {% elif scan["score"]|int >= 30 %}
+
+
+                                <span
+                                    class="risk-suspicious"
+                                    data-i18n="suspicious">
+
+                                    Suspicious
+
+                                </span>
+
+
+                            {% else %}
+
+
+                                <span
+                                    class="risk-safe"
+                                    data-i18n="safe">
+
+                                    Safe
+
+                                </span>
+
+
+                            {% endif %}
+
+
+                        </div>
+
+
+                    </div>
+
+
+                {% else %}
+
+
+                    <!-- NO SCANS -->
+
+                    <div class="empty-scans">
+
+
+                        <div class="empty-icon">
+                            🔍
+                        </div>
+
+
+                        <h4 data-i18n="no_recent_scans">
+
+                            No Recent Scans
+
+                        </h4>
+
+
+                        <p data-i18n="start_scan_message">
+
+                            Start a QR or link scan to see results here.
+
+                        </p>
+
+
+                    </div>
+
+
+                {% endfor %}
+
+
+            </div>
+
+        </section>
 
 
     </main>
 
 
 
-    <!-- ================= BOTTOM NAV ================= -->
+    <!-- =====================================================
+         BOTTOM NAVIGATION
+    ====================================================== -->
 
-    <nav class="bottom-nav">
+    <nav class="bottom-navigation">
 
+
+        <!-- HOME -->
 
         <a
             href="{{ url_for('dashboard') }}"
-            class="nav-item active">
+            class="bottom-nav-item active">
 
-            <span class="nav-icon">
-                🏠
-            </span>
 
             <span>
-                Home
+                ⌂
             </span>
+
+
+            <small data-i18n="home">
+
+                Home
+
+            </small>
+
 
         </a>
 
 
+
+        <!-- HISTORY -->
 
         <a
             href="{{ url_for('history') }}"
-            class="nav-item">
+            class="bottom-nav-item">
 
-            <span class="nav-icon">
-                📋
-            </span>
 
             <span>
+                ◷
+            </span>
+
+
+            <small data-i18n="history">
+
                 History
-            </span>
+
+            </small>
+
 
         </a>
 
 
 
-        <a
-            href="{{ url_for('report') }}"
-            class="nav-item">
-
-            <span class="nav-icon">
-                🚨
-            </span>
-
-            <span>
-                Report
-            </span>
-
-        </a>
-
-
+        <!-- PROFILE -->
 
         <a
             href="{{ url_for('profile') }}"
-            class="nav-item">
+            class="bottom-nav-item">
 
-            <span class="nav-icon">
-                👤
-            </span>
 
             <span>
-                Profile
+                ♙
             </span>
+
+
+            <small data-i18n="profile">
+
+                Profile
+
+            </small>
+
 
         </a>
 
@@ -373,12 +1016,6 @@
 
 
 </div>
-
-
-
-<script
-    src="{{ url_for('static', filename='js/dashboard.js', v='3') }}">
-</script>
 
 
 </body>

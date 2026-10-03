@@ -1,0 +1,79 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TrueScan - Security Alerts</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/alerts.css') }}">
+</head>
+
+<body>
+
+    <header class="alert-header">
+        <h1>TRUESCAN</h1>
+        <p>Security Alerts & Notifications</p>
+    </header>
+
+    <main class="alert-container">
+
+        <a href="/dashboard" class="alert-back">
+            ← Back to Dashboard
+        </a>
+
+        <section class="alert-summary">
+            <h2>Unread Security Alerts</h2>
+
+            <div class="alert-count">
+                {{ unread_count }}
+            </div>
+        </section>
+
+        {% if alerts %}
+
+            {% for alert in alerts %}
+
+                <article class="security-alert">
+
+                    <h3>
+                        ⚠ {{ alert["title"] }}
+                    </h3>
+
+                    <p>
+                        {{ alert["message"] }}
+                    </p>
+
+                    <span class="risk-score">
+                        Risk Score: {{ alert["risk_score"] }}/100
+                    </span>
+
+                    <div class="alert-date">
+                        {{ alert["created_at"] }}
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        {% else %}
+
+            <section class="no-alerts">
+
+                <h2>✓ No Security Alerts</h2>
+
+                <p>
+                    Your account currently has no security alerts.
+                </p>
+
+            </section>
+
+        {% endif %}
+
+    </main>
+<script src="{{ url_for('static', filename='js/truescan-language.js') }}"></script>
+</body>
+
+</html>
